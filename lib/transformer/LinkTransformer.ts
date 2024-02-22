@@ -14,7 +14,7 @@ const rewriteDescriptionLists = (content: HTMLElement) => {
   content.querySelectorAll("dl").forEach((dl) => {
     dl.querySelectorAll("div").forEach((div) => {
       const child = div.firstChild;
-      div.replaceWith(child);
+      div.replaceWith(child!);
     });
     const rows = [];
     let current = { dt: [], dd: [] };
@@ -63,7 +63,7 @@ const rewriteDescriptionLists = (content: HTMLElement) => {
       }
     });
     const node = dl.firstChild;
-    dl.replaceWith("<table></table>").appendChild(node);
+    dl.replaceWith("<table></table>").appendChild(node!);
   });
 };
 
