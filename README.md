@@ -21,13 +21,13 @@ The plugin will also create a `page-tree` to reflect the structure of the Antora
 To install the plugin, you can use the following command in your Antora project:
 
 ```sh
-npm install -D captain
+npm install -D antora-confluence
 ```
 
 or using yarn:
 
 ```sh
-yarn add -D captain
+yarn add -D antora-confluence
 ```
 
 ## Usage
@@ -37,7 +37,7 @@ To use the plugin, you need to add it to your Antora project. You can do this by
 ```yaml
 output:
   destinations:
-    - provider: captain
+    - provider: antora-confluence
       confluence-api: https://<redacted>.atlassian.net
       confluence-space: my-spacekey
 ```
