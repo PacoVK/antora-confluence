@@ -1,7 +1,8 @@
 {
-  "name": "antora-to-confluence",
+  "name": "captain",
   "description": "A tool to convert and publish Antora documentation to Confluence",
   "keywords": [
+    "captain",
     "antora",
     "confluence",
     "documentation",
