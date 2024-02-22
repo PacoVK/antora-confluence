@@ -52,6 +52,10 @@ For full reference, please head over to the [docs](https://docs.antora.org/antor
 | confluence-space | The Confluence space key to publish the pages to     | **required**      |
 | editorVersion    | The Confluence editor version to use to create pages | v1 (default) / v2 |
 
+### Authentication
+
+The plugin uses the `CONFLUENCE_USERNAME` and `CONFLUENCE_PASSWORD` to authenticate with the Confluence API. You can set these values in the environment variables.
+
 #### Logging
 
 You can set the log level of the plugin by setting the `LOG_LEVEL` environment variable. The following levels are available:
