@@ -1,5 +1,15 @@
 {
   "name": "antora-to-confluence",
+  "description": "A tool to convert and publish Antora documentation to Confluence",
+  "keywords": [
+    "antora",
+    "confluence",
+    "documentation",
+    "publishing",
+    "docs-as-code",
+    "asciidoc",
+    "publishToConfluence"
+  ],
   "version": "0.0.1",
   "main": "dist/index.js",
   "files": [
