@@ -37,7 +37,7 @@ To use the plugin, you need to add it to your Antora project. You can do this by
 ```yaml
 output:
   destinations:
-    - provider: 'antora-to-confluence'
+    - provider: "antora-to-confluence"
       confluence-api: https://<redacted>.atlassian.net
       confluence-space: my-spacekey
 ```
@@ -46,24 +46,24 @@ For full reference, please head over to the [docs](https://docs.antora.org/antor
 
 ### Configuration
 
-| Option | Description | Info |
-| --- | --- | --- |
-| confluence-api | URL to your Confluence API endpoint | **required** |
-| confluence-space | The Confluence space key to publish the pages to | **required** |
-| editorVersion | The Confluence editor version to use to create pages | v1 (default) / v2 |
+| Option           | Description                                          | Info              |
+| ---------------- | ---------------------------------------------------- | ----------------- |
+| confluence-api   | URL to your Confluence API endpoint                  | **required**      |
+| confluence-space | The Confluence space key to publish the pages to     | **required**      |
+| editorVersion    | The Confluence editor version to use to create pages | v1 (default) / v2 |
 
 #### Logging
 
 You can set the log level of the plugin by setting the `LOG_LEVEL` environment variable. The following levels are available:
 
-* debug
-* info (**default**)
-* warn
+- debug
+- info (**default**)
+- warn
 
 ## Planned Roadmap
 
-* [ ] Selective publishing
-* [ ] Handle embedded images
+- [ ] Selective publishing
+- [ ] Handle embedded images
 
 ## Contributing
 

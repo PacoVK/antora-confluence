@@ -2,6 +2,9 @@
   "name": "antora-to-confluence",
   "version": "0.0.1",
   "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
   "license": "Apache-2.0",
   "private": false,
   "author": {
