@@ -1,0 +1,19 @@
+name: Build
+on:
+  push:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Setup .npmrc file to publish to npm
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+          registry-url: 'https://registry.npmjs.org'
+      - run: yarn install --frozen-lockfile
+      - run: yarn format
+      - run: yarn lint
+      - run: yarn test
+      - run: yarn build

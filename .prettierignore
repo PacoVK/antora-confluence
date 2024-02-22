@@ -1,0 +1,9 @@
+# Ignore artifacts:
+node_modules
+coverage
+.github
+
+# Yarn
+.pnp.*
+
+*.html
