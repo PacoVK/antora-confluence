@@ -32,7 +32,7 @@ yarn add -D antora-confluence
 
 ## Usage
 
-To use the plugin, you need to add it to your Antora project. You can do this by adding the following to your output section in `antora.yml`:
+To use the plugin, you need to add it to your Antora project. You can do this by adding the following to your output section in `playbook.yml`:
 
 ```yaml
 output:
