@@ -7,7 +7,7 @@ const LOGGER = getLogger();
 
 export class ConfluenceClientV1 extends ConfluenceClient {
   createPage(page: ConfluencePage): Promise<Response> {
-    LOGGER.info("Creating page ", page.title);
+    LOGGER.info(`Creating page ${page.title}`);
     return this.fetch(`${this.BASE_URL}/${this.API_V1_PATH}/content`, {
       method: "POST",
       headers: {
@@ -56,7 +56,7 @@ export class ConfluenceClientV1 extends ConfluenceClient {
     pageId: string,
     newVersion: number,
   ): Promise<Response> {
-    LOGGER.info("Updating page ", page.title, " with new version ", newVersion);
+    LOGGER.info(`Updating page ${page.title} with new version ${newVersion}`);
     return this.fetch(
       `${this.BASE_URL}/${this.API_V1_PATH}/content/${pageId}`,
       {

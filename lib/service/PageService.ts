@@ -30,7 +30,7 @@ const buildPageStructure = async (files: BufferFile[], target: any) => {
       !fileName.endsWith(".html") ||
       fileName.includes(ANTORA_DEFAULTS.NOT_FOUND_PAGE)
     ) {
-      LOGGER.debug("Skipping ", fileName);
+      LOGGER.debug(`Skipping ${fileName}`);
       continue;
     }
     const parts = fileName.split("/");
@@ -210,8 +210,7 @@ const publish = async (
                     LOGGER.info("Attachment hasn't changed!");
                   } else {
                     LOGGER.info(
-                      "Attachment has changed, updating...",
-                      attachment.results[0].id,
+                      `Attachment has changed, updating... ${attachment.results[0].id}`,
                     );
                     await sendRequest(
                       confluenceClient.updateAttachment({
@@ -226,8 +225,7 @@ const publish = async (
                   }
                 } else {
                   LOGGER.debug(
-                    "Attachment does not exist, creating...",
-                    upload.fileName,
+                    `Attachment ${upload.fileName} does not exist, creating...`,
                   );
                   await sendRequest(
                     confluenceClient.createAttachment({
@@ -239,7 +237,7 @@ const publish = async (
                   );
                 }
               } catch (e) {
-                LOGGER.error("Error uploading attachment ", upload);
+                LOGGER.error(`Error uploading attachment ${upload}`);
               }
             }
           }

@@ -12,16 +12,14 @@ export const getPageTitle = (input: string) => {
     } else {
       pageTitleElement = dom.querySelector("h1");
       LOGGER.debug(
-        "Could not extract a title, looking for any <h1>",
-        pageTitleElement?.text,
+        `Could not extract a title, looking for any <h1> - ${pageTitleElement?.text}`
       );
       if (pageTitleElement) {
         pageTitle = pageTitleElement.text;
       } else {
         pageTitleElement = dom.querySelector("h2");
         LOGGER.debug(
-          "Could not extract a title, looking for any <h2>",
-          pageTitleElement?.text,
+          `Could not extract a title, looking for any <h2> ${pageTitleElement?.text}`
         );
         if (pageTitleElement) {
           pageTitle = pageTitleElement.text;
@@ -30,7 +28,7 @@ export const getPageTitle = (input: string) => {
     }
     pageTitle = pageTitle?.trim();
   } catch (e) {
-    LOGGER.error("Error reading input ", input);
+    LOGGER.error(`Error reading input ${input}`);
   }
   return pageTitle;
 };
