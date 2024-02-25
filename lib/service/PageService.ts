@@ -19,10 +19,33 @@ import rewriteCDATASections from "../transformer/CdataTransformer";
 import { ConfluenceClient } from "../client/ConfluenceClient";
 import { BufferFile } from "vinyl";
 import { getLogger } from "../Logger";
+import { FileFilter, PageFilter, PathFilter } from "../types";
 
 const LOGGER = getLogger();
 
-const buildPageStructure = async (files: BufferFile[], target: any) => {
+const matchesFilter = (file: BufferFile, filters: PageFilter[]) => {
+  const matches = filters?.filter((filter) => {
+    const pathFilter = (filter as PathFilter).path;
+    const fileFilter = (filter as FileFilter).files;
+    if (pathFilter) {
+      return Path.dirname(file.path).startsWith(pathFilter);
+    } else if (fileFilter) {
+      return fileFilter.includes(file.path);
+    } else {
+      LOGGER.error(`Invalid filter defined ${JSON.stringify(filter)}`);
+      throw new Error(
+        "Filter must be a valid type of PathFilter or FileFilter",
+      );
+    }
+  });
+  return matches.length > 0;
+};
+
+const buildPageStructure = async (
+  files: BufferFile[],
+  target: any,
+  filters?: PageFilter[],
+) => {
   for await (const file of files) {
     const fileName = file.path;
     if (
@@ -31,6 +54,9 @@ const buildPageStructure = async (files: BufferFile[], target: any) => {
       fileName.includes(ANTORA_DEFAULTS.NOT_FOUND_PAGE)
     ) {
       LOGGER.debug(`Skipping ${fileName}`);
+      continue;
+    }
+    if (filters && !matchesFilter(file, filters)) {
       continue;
     }
     const parts = fileName.split("/");
@@ -76,6 +102,7 @@ const buildPageStructure = async (files: BufferFile[], target: any) => {
       currentObject["sibling_pages"].push(page);
     }
   }
+  target.delete("inventory");
 };
 
 const createParentIfNotExists = async (

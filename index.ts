@@ -25,7 +25,7 @@ const publishToConfluence = async (
   await confluenceClient.init();
   const pageStructure = new Map();
   pageStructure.set("inventory", new Map());
-  await buildPageStructure(files, pageStructure);
+  await buildPageStructure(files, pageStructure, destConfig.filter);
   await publish(confluenceClient, outPutDir, pageStructure);
   return {};
 };

@@ -103,7 +103,7 @@ const rewriteInternalLinks = (
           pageTitle = `${pageTitle?.trim()}`;
         } catch (e) {
           LOGGER.error(
-            `Error reading file ${path.join(path.dirname(baseUrl), href)}`
+            `Error reading file ${path.join(path.dirname(baseUrl), href)}`,
           );
         }
       }
