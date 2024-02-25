@@ -21,12 +21,18 @@ const publishToConfluence = async (
     editorVersion: destConfig.editorVersion || "v1",
     baseUrl: new URL(destConfig.confluenceApi),
     spaceKey: destConfig.confluenceSpace,
+    ancestorId: destConfig.ancestorId,
   });
   await confluenceClient.init();
   const pageStructure = new Map();
   pageStructure.set("inventory", new Map());
   await buildPageStructure(files, pageStructure, destConfig.filter);
-  await publish(confluenceClient, outPutDir, pageStructure);
+  await publish(
+    confluenceClient,
+    outPutDir,
+    pageStructure,
+    destConfig.showBanner || false,
+  );
   return {};
 };
 
