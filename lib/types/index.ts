@@ -24,3 +24,15 @@ export type AttachmentRepresentation = {
   filePath: string;
   comment: string;
 };
+
+export interface PageFilter {
+  ancestorId?: string;
+}
+
+export interface PathFilter extends PageFilter {
+  path: string;
+}
+
+export interface FileFilter extends PageFilter {
+  files: string[];
+}

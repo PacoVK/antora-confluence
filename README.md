@@ -46,11 +46,48 @@ For full reference, please head over to the [docs](https://docs.antora.org/antor
 
 ### Configuration
 
-| Option           | Description                                          | Info              |
-| ---------------- | ---------------------------------------------------- | ----------------- |
-| confluence-api   | URL to your Confluence API endpoint                  | **required**      |
-| confluence-space | The Confluence space key to publish the pages to     | **required**      |
-| editorVersion    | The Confluence editor version to use to create pages | v1 (default) / v2 |
+| Option           | Description                                                   | Info              |
+| ---------------- | ------------------------------------------------------------- | ----------------- |
+| confluence-api   | URL to your Confluence API endpoint                           | **required**      |
+| confluence-space | The Confluence space key to publish the pages to              | **required**      |
+| editorVersion    | The Confluence editor version to use to create pages          | v1 (default) / v2 |
+| filters          | Specify paths or files that you want to publish to Confluence | [] (default)      |
+
+#### Filters
+
+You can specify filters to only push certain files or folders instead of all. The filters must match the natural output structure of Antora. You can specify as many filters as you need. There are two different types of filters: `PathFilter` and `FileFilter`.
+
+To filter on a **specific directory**:
+
+> Info: The below example would only publish all files within the folders `module-a/1.0/example` and `module-c/2.1/foo`
+
+```yaml
+output:
+  destinations:
+    - provider: antora-confluence
+      confluence-api: https://<redacted>.atlassian.net
+      confluence-space: my-spacekey
+      filters:
+        - path: module-a/1.0/example
+        - path: module-c/2.1/foo
+```
+
+To filter on **specific files**:
+
+> Info: The below example would only publish the three files, specfied by the filter
+
+```yaml
+output:
+  destinations:
+    - provider: antora-confluence
+      confluence-api: https://<redacted>.atlassian.net
+      confluence-space: my-spacekey
+      filters:
+        - files:
+            - module-a/1.0/example/manual.html
+            - module-a/1.0/example/troubleshoot.html
+            - module-c/1.0/foo/examples.html
+```
 
 ### Authentication
 
@@ -66,7 +103,6 @@ You can set the log level of the plugin by setting the `LOG_LEVEL` environment v
 
 ## Planned Roadmap
 
-- [ ] Selective publishing
 - [ ] Handle embedded images
 
 ## Contributing

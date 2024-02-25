@@ -34,13 +34,14 @@ export class ConfluenceClientV1 extends ConfluenceClient {
             },
           },
         },
-        ancestors: page.parentPageId
-          ? [
-              {
-                id: page.parentPageId,
-              },
-            ]
-          : undefined,
+        ancestors:
+          page.parentPageId || this.ANCESTOR_ID
+            ? [
+                {
+                  id: page.parentPageId || this.ANCESTOR_ID,
+                },
+              ]
+            : undefined,
         body: {
           storage: {
             value: page.content,

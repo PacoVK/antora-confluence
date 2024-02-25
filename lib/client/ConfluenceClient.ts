@@ -5,6 +5,7 @@ interface ConfluenceClientOptions {
   baseUrl: URL;
   spaceKey: string;
   editorVersion: string;
+  ancestorId?: string;
 }
 
 const LOGGER = getLogger();
@@ -21,6 +22,7 @@ export abstract class ConfluenceClient {
   readonly EDITOR_VERSION;
   readonly BASE_URL;
   readonly CREDENTIALS;
+  readonly ANCESTOR_ID;
 
   constructor(config: ConfluenceClientOptions) {
     this.BASE_URL = config.baseUrl.origin;
@@ -35,6 +37,7 @@ export abstract class ConfluenceClient {
     this.API_V1_PATH = apiContext + this.API_V1_IDENTIFIER;
     this.API_V2_PATH = apiContext + this.API_V2_IDENTIFIER;
     this.CREDENTIALS = this.encodeCredentials();
+    this.ANCESTOR_ID = config.ancestorId;
   }
 
   async init() {
