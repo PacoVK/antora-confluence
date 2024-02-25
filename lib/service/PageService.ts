@@ -150,6 +150,7 @@ const publish = async (
   confluenceClient: ConfluenceClient,
   outPutDir: string,
   pageTree: any,
+  showBanner: boolean,
   parent?: string,
 ) => {
   for (const key in pageTree) {
@@ -161,7 +162,7 @@ const publish = async (
       const parentId = parentPage?.id;
       const pages = pageTree[key];
       for (const page of pages) {
-        const confluencePage = processPage(page, outPutDir);
+        const confluencePage = processPage(page, outPutDir, showBanner);
         if (confluencePage) {
           const localHash = confluencePage.hash;
           let pageId;
@@ -272,12 +273,18 @@ const publish = async (
       }
     } else if (typeof pageTree[key] === "object") {
       await createParentIfNotExists(confluenceClient, key, parent);
-      await publish(confluenceClient, outPutDir, pageTree[key], key);
+      await publish(
+        confluenceClient,
+        outPutDir,
+        pageTree[key],
+        showBanner,
+        key,
+      );
     }
   }
 };
 
-const processPage = (page: any, outPutDir: string) => {
+const processPage = (page: any, outPutDir: string, showBanner: boolean) => {
   LOGGER.info(`Processing ${page.fileName}`);
   const baseUrl = path.join(process.cwd(), outPutDir, Path.dirname(page.fqfn));
   const htmlFilePath = path.join(process.cwd(), outPutDir, page.fqfn);
@@ -307,6 +314,13 @@ const processPage = (page: any, outPutDir: string) => {
       .replaceAll("checked />", 'checked="checked" />')
       .replaceAll(Placeholder.CDATA_PLACEHOLDER_START, "<![CDATA[")
       .replaceAll(Placeholder.CDATA_PLACEHOLDER_END, "]]>");
+    if (showBanner) {
+      htmlContent = `<ac:structured-macro ac:name="note" ac:schema-version="1"><ac:rich-text-body>
+                    <p>This page has been published via Antora plugin. 
+                    Every change to this site will be lost, if you run Antora the next time. 
+                    You can still use comments, as they will be preserved.</p>
+                    </ac:rich-text-body></ac:structured-macro>${htmlContent}`;
+    }
     const localHash = calculateHash(htmlContent);
     htmlContent += `<ac:placeholder>hash: #${localHash}#</ac:placeholder>`;
     return {
