@@ -46,12 +46,14 @@ For full reference, please head over to the [docs](https://docs.antora.org/antor
 
 ### Configuration
 
-| Option           | Description                                                   | Info              |
-| ---------------- | ------------------------------------------------------------- | ----------------- |
-| confluence-api   | URL to your Confluence API endpoint                           | **required**      |
-| confluence-space | The Confluence space key to publish the pages to              | **required**      |
-| editorVersion    | The Confluence editor version to use to create pages          | v1 (default) / v2 |
-| filters          | Specify paths or files that you want to publish to Confluence | [] (default)      |
+| Option           | Description                                                                                                                  | Info                       |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| confluence-api   | URL to your Confluence API endpoint                                                                                          | **required**               |
+| confluence-space | The Confluence space key to publish the pages to                                                                             | **required**               |
+| editor-version   | The Confluence editor version to use to create pages                                                                         | v1 (default) / v2          |
+| filters          | Specify paths or files that you want to publish to Confluence                                                                | [] (default)               |
+| ancestor-id      | Specify the overall parent page for your docs. Needs to be the pageId of the parent page, not the DisplayName.               | defaults to the space root |
+| show-banner      | Specify if all your pages should contain an info banner, that this pages were created by automation and changes may be lost. | false (default)            |
 
 #### Filters
 
