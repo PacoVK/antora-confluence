@@ -36,8 +36,8 @@ const publishToConfluence = async (
   const pageStructure = new Map();
   pageStructure.set("inventory", new Map());
   pageStructure.set("flat", []);
-  let renames: any[] = [];
-  let state = await initializeState(confluenceClient);
+  const renames: any[] = [];
+  const state = await initializeState(confluenceClient);
   if (state) {
     const stateIds = Object.values(JSON.parse(state.value)).map(
       //@ts-ignore
