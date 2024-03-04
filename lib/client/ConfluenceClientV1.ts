@@ -1,12 +1,19 @@
 import { ConfluenceClient } from "./ConfluenceClient";
-import { ConfluenceAttachment, ConfluencePage } from "../types";
+import {
+  ConfluenceAttachment,
+  ConfluencePage,
+  ConfluencePageStatus,
+} from "../types";
 import FormData from "form-data";
 import { getLogger } from "../Logger";
 
 const LOGGER = getLogger();
 
 export class ConfluenceClientV1 extends ConfluenceClient {
-  createPage(page: ConfluencePage): Promise<Response> {
+  createPage(
+    page: ConfluencePage,
+    status: ConfluencePageStatus,
+  ): Promise<Response> {
     LOGGER.info(`Creating page ${page.title}`);
     return this.fetch(`${this.BASE_URL}/${this.API_V1_PATH}/content`, {
       method: "POST",
@@ -18,6 +25,7 @@ export class ConfluenceClientV1 extends ConfluenceClient {
       body: JSON.stringify({
         type: "page",
         title: page.title,
+        status,
         space: {
           key: this.SPACE_KEY,
         },
@@ -56,6 +64,7 @@ export class ConfluenceClientV1 extends ConfluenceClient {
     page: ConfluencePage,
     pageId: string,
     newVersion: number,
+    status?: ConfluencePageStatus,
   ): Promise<Response> {
     LOGGER.info(`Updating page ${page.title} with new version ${newVersion}`);
     return this.fetch(
@@ -73,6 +82,7 @@ export class ConfluenceClientV1 extends ConfluenceClient {
             number: newVersion,
           },
           title: page.title,
+          status,
           metadata: {
             properties: {
               editor: {
@@ -119,11 +129,28 @@ export class ConfluenceClientV1 extends ConfluenceClient {
     );
   }
 
-  fetchPageIdByName(title: string): Promise<Response> {
+  fetchPageIdByName(
+    title: string,
+    status?: ConfluencePageStatus,
+  ): Promise<Response> {
     return this.fetch(
-      `${this.BASE_URL}/${this.API_V1_PATH}/content?spaceKey=${this.SPACE_KEY}&title=${encodeURIComponent(title)}&expand=body.storage,version`,
+      `${this.BASE_URL}/${this.API_V1_PATH}/content?spaceKey=${this.SPACE_KEY}&title=${encodeURIComponent(title)}&status=${status || ConfluencePageStatus.CURRENT}&expand=body.storage,version`,
       {
         method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Request-Content-Type": "application/json",
+          Authorization: `Basic ${this.CREDENTIALS}`,
+        },
+      },
+    );
+  }
+
+  deletePage(pageId: string): Promise<Response> {
+    return this.fetch(
+      `${this.BASE_URL}/${this.API_V1_PATH}/content/${pageId}`,
+      {
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
           "Request-Content-Type": "application/json",

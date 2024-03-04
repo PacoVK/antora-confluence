@@ -4,6 +4,11 @@ export type ConfluencePage = {
   parentPageId?: string;
 };
 
+export enum ConfluencePageStatus {
+  CURRENT = "current",
+  DRAFT = "draft",
+}
+
 export type ConfluenceAttachment = {
   pageId: string;
   fileName: string;
