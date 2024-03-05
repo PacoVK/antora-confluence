@@ -27,7 +27,9 @@ import {
   ConfluencePageStatus,
   FileFilter,
   PageFilter,
+  PageRepresentation,
   PathFilter,
+  PathMapper,
 } from "../types";
 
 const LOGGER = getLogger();
@@ -53,6 +55,7 @@ const matchesFilter = (file: BufferFile, filters: PageFilter[]) => {
 const buildPageStructure = async (
   files: BufferFile[],
   target: any,
+  mappers?: PathMapper[],
   filters?: PageFilter[],
 ) => {
   for await (const file of files) {
@@ -68,30 +71,48 @@ const buildPageStructure = async (
     if (filters && !matchesFilter(file, filters)) {
       continue;
     }
-    const parts = fileName.split("/");
+    let parts = fileName.split("/");
     let currentObject = target;
 
-    for (let i = 0; i < parts.length - 1; i++) {
-      let part;
-      if (i === 0) {
-        part = parts[i];
-      } else {
-        part = `[${parts[0]}]-${parts[i]}`;
-      }
+    let mapper: PathMapper | undefined;
+    if (mappers) {
+      mapper = mappers.find((mapper) => {
+        return fileName.startsWith(mapper.path);
+      });
+      if (mapper) {
+        if (!currentObject[mapper.target]) {
+          currentObject[mapper.target] = {};
+        }
 
-      if (!currentObject[part]) {
-        currentObject[part] = {};
+        currentObject = currentObject[mapper.target];
+        parts = fileName
+          .replace(`${Path.normalize(mapper.path)}/`, "")
+          .split("/");
       }
+    }
 
-      currentObject = currentObject[part];
+    if (!mapper || parts.length > 1) {
+      for (let i = 0; i < parts.length - 1; i++) {
+        let part;
+        if (i === 0) {
+          part = parts[i];
+        } else {
+          part = `[${parts[0]}]-${parts[i]}`;
+        }
+
+        if (!currentObject[part]) {
+          currentObject[part] = {};
+        }
+        currentObject = currentObject[part];
+      }
     }
 
     const lastPart = parts[parts.length - 1];
     let pageTitle = getPageTitle(file.contents.toString());
     pageTitle = target.get("inventory").get(pageTitle)
       ? `${parts[parts.length - 2]}-${pageTitle}`
-      : pageTitle;
-    const page = {
+      : pageTitle!;
+    const page: PageRepresentation = {
       fileName: lastPart,
       pageTitle,
       parent: parts[parts.length - 2],

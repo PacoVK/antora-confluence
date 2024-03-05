@@ -13,6 +13,7 @@ import {
   initializeState,
   updateState,
 } from "./lib/service/StateService";
+import { CaptainConfig, PageRepresentation } from "./lib/types";
 
 let confluenceClient: ConfluenceClient;
 let outPutDir: string;
@@ -20,7 +21,7 @@ let outPutDir: string;
 const LOGGER = getLogger();
 
 const publishToConfluence = async (
-  destConfig: any,
+  destConfig: CaptainConfig,
   files: BufferFile[],
   playbook: any,
 ) => {
@@ -39,35 +40,36 @@ const publishToConfluence = async (
   const renames: any[] = [];
   const state = await initializeState(confluenceClient);
   if (state) {
-    const stateIds = Object.values(JSON.parse(state.value)).map(
-      //@ts-ignore
-      (entry) => entry.id,
+    const stateValues: PageRepresentation[] = Object.values(
+      JSON.parse(state.value),
     );
-    await buildPageStructure(files, pageStructure, destConfig.filter);
+    const stateIds = stateValues.map((entry) => entry.id);
+    await buildPageStructure(
+      files,
+      pageStructure,
+      destConfig.mapper,
+      destConfig.filter,
+    );
     const removalIds = stateIds.filter((id) => {
-      //@ts-ignore
-      return !pageStructure.get("flat").find((item2) => item2.id === id);
+      return !pageStructure
+        .get("flat")
+        .find((page: PageRepresentation) => page.id === id);
     });
-    const removals = Object.values(JSON.parse(state.value)).filter(
-      (stateObject) => {
-        //@ts-ignore
-        return removalIds.includes(stateObject.id);
-      },
-    );
+    const removals = stateValues.filter((stateObject) => {
+      return removalIds.includes(stateObject.id);
+    });
     if (removals.length > 0) {
       LOGGER.info("Removing untracked pages");
       await deletePages(confluenceClient, removals);
     }
 
-    Object.values(JSON.parse(state.value)).forEach((statePage) => {
-      const rename = pageStructure.get("flat").find(
-        //@ts-ignore
-        (item2) =>
-          //@ts-ignore
-          item2.id === statePage.id &&
-          //@ts-ignore
-          item2.pageTitle !== statePage.pageTitle,
-      );
+    stateValues.forEach((statePage) => {
+      const rename = pageStructure
+        .get("flat")
+        .find(
+          (page: PageRepresentation) =>
+            page.id === statePage.id && page.pageTitle !== statePage.pageTitle,
+        );
       if (rename) {
         renames.push({
           newOne: rename,
@@ -80,6 +82,17 @@ const publishToConfluence = async (
       `Found pages that need to be renamed ${JSON.stringify(renames)}`,
     );
 
+    LOGGER.info("Publishing pages");
+    await publish(
+      confluenceClient,
+      outPutDir,
+      pageStructure,
+      renames,
+      destConfig.showBanner || false,
+    );
+
+    LOGGER.info("Writing state to Confluence");
+
     await updateState(confluenceClient, {
       ...state,
       value: JSON.stringify(Object.fromEntries(pageStructure.get("inventory"))),
@@ -91,14 +104,6 @@ const publishToConfluence = async (
     );
   }
 
-  LOGGER.info("Publishing pages");
-  await publish(
-    confluenceClient,
-    outPutDir,
-    pageStructure,
-    renames,
-    destConfig.showBanner || false,
-  );
   return {};
 };
 
