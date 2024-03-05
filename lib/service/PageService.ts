@@ -409,4 +409,51 @@ const processPage = (page: any, outPutDir: string, showBanner: boolean) => {
   }
 };
 
-export { buildPageStructure, publish, deletePages };
+const getPagesToBeRemoved = (
+  stateValues: PageRepresentation[],
+  pageStructure: Map<any, any>,
+) => {
+  const stateIds = stateValues.map((entry) => entry.id);
+  const removalIds = stateIds.filter((id) => {
+    return !pageStructure
+      .get("flat")
+      .find((page: PageRepresentation) => page.id === id);
+  });
+  return stateValues.filter((stateObject) => {
+    return removalIds.includes(stateObject.id);
+  });
+};
+
+const getRenamedPages = (
+  stateValues: PageRepresentation[],
+  pageStructure: Map<any, any>,
+) => {
+  const renames: any[] = [];
+  stateValues.forEach((statePage) => {
+    const rename = pageStructure
+      .get("flat")
+      .find(
+        (page: PageRepresentation) =>
+          page.id === statePage.id && page.pageTitle !== statePage.pageTitle,
+      );
+    if (rename) {
+      renames.push({
+        newOne: rename,
+        oldOne: statePage,
+      });
+    }
+  });
+
+  LOGGER.debug(
+    `Found pages that need to be renamed ${JSON.stringify(renames)}`,
+  );
+  return renames;
+};
+
+export {
+  buildPageStructure,
+  publish,
+  deletePages,
+  getPagesToBeRemoved,
+  getRenamedPages,
+};

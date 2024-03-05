@@ -3,8 +3,10 @@ import { ConfluenceClientV1 } from "./lib/client/ConfluenceClientV1";
 import { ConfluenceClient } from "./lib/client/ConfluenceClient";
 import {
   buildPageStructure,
-  publish,
   deletePages,
+  getPagesToBeRemoved,
+  getRenamedPages,
+  publish,
 } from "./lib/service/PageService";
 import { BufferFile } from "vinyl";
 import { getLogger } from "./lib/Logger";
@@ -37,50 +39,26 @@ const publishToConfluence = async (
   const pageStructure = new Map();
   pageStructure.set("inventory", new Map());
   pageStructure.set("flat", []);
-  const renames: any[] = [];
+
   const state = await initializeState(confluenceClient);
   if (state) {
     const stateValues: PageRepresentation[] = Object.values(
       JSON.parse(state.value),
     );
-    const stateIds = stateValues.map((entry) => entry.id);
     await buildPageStructure(
       files,
       pageStructure,
       destConfig.mapper,
       destConfig.filter,
     );
-    const removalIds = stateIds.filter((id) => {
-      return !pageStructure
-        .get("flat")
-        .find((page: PageRepresentation) => page.id === id);
-    });
-    const removals = stateValues.filter((stateObject) => {
-      return removalIds.includes(stateObject.id);
-    });
+
+    const removals = getPagesToBeRemoved(stateValues, pageStructure);
     if (removals.length > 0) {
       LOGGER.info("Removing untracked pages");
       await deletePages(confluenceClient, removals);
     }
 
-    stateValues.forEach((statePage) => {
-      const rename = pageStructure
-        .get("flat")
-        .find(
-          (page: PageRepresentation) =>
-            page.id === statePage.id && page.pageTitle !== statePage.pageTitle,
-        );
-      if (rename) {
-        renames.push({
-          newOne: rename,
-          oldOne: statePage,
-        });
-      }
-    });
-
-    LOGGER.debug(
-      `Found pages that need to be renamed ${JSON.stringify(renames)}`,
-    );
+    const renames = getRenamedPages(stateValues, pageStructure);
 
     LOGGER.info("Publishing pages");
     await publish(
@@ -111,7 +89,7 @@ const publishToConfluence = async (
       confluenceClient,
       outPutDir,
       pageStructure,
-      renames,
+      [],
       destConfig.showBanner || false,
     );
 
