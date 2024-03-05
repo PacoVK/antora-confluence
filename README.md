@@ -1,5 +1,7 @@
 # Captain - Confluence Antora Plugin To Aid Integration Nicely
 
+[![Build](https://github.com/PacoVK/antora-confluence/actions/workflows/ci.yml/badge.svg)](https://github.com/PacoVK/antora-confluence/actions/workflows/ci.yml)
+
 > NOTE: This plugin is in an early phase. It is still in development.
 
 ![Captain Logo](assets/captain.png)
