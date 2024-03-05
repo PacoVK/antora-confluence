@@ -15,7 +15,7 @@ import {
   initializeState,
   updateState,
 } from "./lib/service/StateService";
-import { CaptainConfig, PageRepresentation } from "./lib/types";
+import { AntoraPlaybook, CaptainConfig, PageRepresentation } from "./lib/types";
 
 let confluenceClient: ConfluenceClient;
 let outPutDir: string;
@@ -25,7 +25,7 @@ const LOGGER = getLogger();
 const publishToConfluence = async (
   destConfig: CaptainConfig,
   files: BufferFile[],
-  playbook: any,
+  playbook: AntoraPlaybook,
 ) => {
   LOGGER.info(`Publishing ${playbook.site.title} to Confluence`);
   outPutDir = playbook.output.dir || ANTORA_DEFAULTS.OUTPUT_DIR;
@@ -65,8 +65,8 @@ const publishToConfluence = async (
       confluenceClient,
       outPutDir,
       pageStructure,
-      renames,
       destConfig.showBanner || false,
+      renames,
     );
 
     LOGGER.info("Writing state to Confluence");
@@ -89,7 +89,6 @@ const publishToConfluence = async (
       confluenceClient,
       outPutDir,
       pageStructure,
-      [],
       destConfig.showBanner || false,
     );
 

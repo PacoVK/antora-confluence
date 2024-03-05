@@ -26,6 +26,11 @@ export type PageRepresentation = {
   content?: string;
 };
 
+export type PageDeltaImage = {
+  newOne: PageRepresentation;
+  oldOne: PageRepresentation;
+};
+
 export type AttachmentRepresentation = {
   fileName: string;
   filePath: string;
@@ -58,3 +63,12 @@ export interface PathFilter extends PageFilter {
 export interface FileFilter extends PageFilter {
   files: string[];
 }
+
+export type AntoraPlaybook = {
+  site: {
+    title: string;
+  };
+  output: {
+    dir?: string;
+  };
+};

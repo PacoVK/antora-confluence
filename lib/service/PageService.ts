@@ -26,6 +26,7 @@ import { getLogger } from "../Logger";
 import {
   ConfluencePageStatus,
   FileFilter,
+  PageDeltaImage,
   PageFilter,
   PageRepresentation,
   PathFilter,
@@ -204,8 +205,8 @@ const publish = async (
   confluenceClient: ConfluenceClient,
   outPutDir: string,
   pageTree: any,
-  renames: any[],
   showBanner: boolean,
+  renames?: PageDeltaImage[],
   parent?: string,
 ) => {
   for (const key in pageTree) {
@@ -232,20 +233,19 @@ const publish = async (
             );
             pageId = id;
           } else {
-            const rename = renames.filter((rename) => {
+            const rename = renames?.filter((rename) => {
               return confluencePage.title === rename.newOne.pageTitle;
-            });
-            const fetchTitle =
-              rename.length > 0
-                ? rename[0].oldOne.pageTitle
-                : confluencePage.title;
+            })[0];
+            const fetchTitle = rename
+              ? rename.oldOne.pageTitle
+              : confluencePage.title;
             const componentPage = await sendRequest(
               confluenceClient.fetchPageIdByName(fetchTitle),
             );
             if (
               componentPage.results &&
               componentPage.results.length > 0 &&
-              rename.length === 0
+              !rename
             ) {
               const { id, version } = componentPage.results[0];
               const pageComp = parse(
@@ -350,8 +350,8 @@ const publish = async (
         confluenceClient,
         outPutDir,
         pageTree[key],
-        renames,
         showBanner,
+        renames,
         key,
       );
     }
@@ -428,7 +428,7 @@ const getRenamedPages = (
   stateValues: PageRepresentation[],
   pageStructure: Map<any, any>,
 ) => {
-  const renames: any[] = [];
+  const renames: PageDeltaImage[] = [];
   stateValues.forEach((statePage) => {
     const rename = pageStructure
       .get("flat")
