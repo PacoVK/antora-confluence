@@ -55,6 +55,10 @@ output:
 
 For full reference, please head over to the [docs](https://docs.antora.org/antora/latest/playbook/configure-output/).
 
+### State Management
+
+The Captain will keep track of the pages it has created in Confluence. This is to ensure that it does not create duplicate pages and to detect page renames. The state is stored in a dedicated page with `DRAFT` status called `Captain State Page` in the root of your Space, or if defined, right under your starting point defined via `ancestor-id` option. If you delete this page, the Captain will recreate it, but it will assume no page exist in the target space. This may lead to errors and the only solution is to delete all Pages managed by Captain. Per default Confluence Pages created in `DRAFT` status are only visible to the owner.
+
 ### Configuration
 
 | Option           | Description                                                                                                                  | Info                       |
