@@ -19,7 +19,7 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[semantic version
 
 ### added
 
-* [Implement Statemanagement for Confluence Pages and add `mapper` option](https://github.com/PacoVK/antora-confluence/pull/7)
+- [Implement Statemanagement for Confluence Pages and add `mapper` option](https://github.com/PacoVK/antora-confluence/pull/7)
 
 ### changed
 
@@ -27,12 +27,12 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[semantic version
 
 ### fixes
 
-* [Fix Log output missing information](https://github.com/PacoVK/antora-confluence/pull/3)
+- [Fix Log output missing information](https://github.com/PacoVK/antora-confluence/pull/3)
 
 ### added
 
-* [Implement `filter`](https://github.com/PacoVK/antora-confluence/pull/4) 
-* [Implement `show-banner` and `ancestor-id` options](https://github.com/PacoVK/antora-confluence/pull/5)
+- [Implement `filter`](https://github.com/PacoVK/antora-confluence/pull/4)
+- [Implement `show-banner` and `ancestor-id` options](https://github.com/PacoVK/antora-confluence/pull/5)
 
 ### changed
 
