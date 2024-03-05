@@ -4,6 +4,11 @@ export type ConfluencePage = {
   parentPageId?: string;
 };
 
+export enum ConfluencePageStatus {
+  CURRENT = "current",
+  DRAFT = "draft",
+}
+
 export type ConfluenceAttachment = {
   pageId: string;
   fileName: string;
@@ -13,10 +18,17 @@ export type ConfluenceAttachment = {
 };
 
 export type PageRepresentation = {
-  title: string;
-  content: string;
-  attachments: any[];
-  hash: string;
+  fileName: string;
+  pageTitle: string;
+  parent: string;
+  fqfn: string;
+  id: string;
+  content?: string;
+};
+
+export type PageDeltaImage = {
+  newOne: PageRepresentation;
+  oldOne: PageRepresentation;
 };
 
 export type AttachmentRepresentation = {
@@ -24,6 +36,21 @@ export type AttachmentRepresentation = {
   filePath: string;
   comment: string;
 };
+
+export type CaptainConfig = {
+  editorVersion: "v1" | "v2";
+  confluenceApi: string;
+  confluenceSpace: string;
+  ancestorId: string;
+  showBanner: boolean;
+  mapper: PathMapper[];
+  filter: PageFilter[];
+};
+
+export interface PathMapper {
+  path: string;
+  target: string;
+}
 
 export interface PageFilter {
   ancestorId?: string;
@@ -36,3 +63,12 @@ export interface PathFilter extends PageFilter {
 export interface FileFilter extends PageFilter {
   files: string[];
 }
+
+export type AntoraPlaybook = {
+  site: {
+    title: string;
+  };
+  output: {
+    dir?: string;
+  };
+};

@@ -21,7 +21,9 @@ The code of the plugin was heavily inspired by [docToolchain](https://doctoolcha
 
 The plugin uses the Confluence REST API to create and update pages in Confluence. It uses the `confluence-space` to determine where to publish the pages. The plugin will create a page for each Antora page and will use the `title` and `content` of the page to create the Confluence page.
 
-The plugin will also create a `page-tree` to reflect the structure of the Antora pages in Confluence. Each Antora module version will be a child page of the `page-tree` and the pages will be children of the module pages.
+The plugin will also create a page tree to reflect the structure of the Antora pages in Confluence. Each Antora module version will be a child page of the page tree and the pages will be children of the module pages.
+
+You can customize the page tree by using the `mapper` option. This will allow you to map Antora pages to Confluence pages and control the structure of the page tree.
 
 ## Installation
 
@@ -61,8 +63,39 @@ For full reference, please head over to the [docs](https://docs.antora.org/antor
 | filters          | Specify paths or files that you want to publish to Confluence                                                                | [] (default)               |
 | ancestor-id      | Specify the overall parent page for your docs. Needs to be the pageId of the parent page, not the DisplayName.               | defaults to the space root |
 | show-banner      | Specify if all your pages should contain an info banner, that this pages were created by automation and changes may be lost. | false (default)            |
+| mapper           | Specify a custom mapper to map the Antora pages to Confluence pages.                                                         | [] (default)               |
 
-#### Filters
+#### Using Mappers
+
+You can specify a list of custom mappers to map the Antora pages to Confluence pages. A mapper consists of `path` and `target`. The `path` is actually the Antora page path that you want to map and the `target` is the Confluence page title that you want to map to.
+
+> Info: The below example would map the Antora page `module-a/1.0/example/manual` to the Confluence page `Manual`.
+
+```yaml
+output:
+  destinations:
+    - provider: antora-confluence
+      confluence-api: https://<redacted>.atlassian.net
+      confluence-space: my-spacekey
+      mapper:
+        - path: module-a/1.0/example/manual
+          target: Manual
+```
+
+If you would not specify a mapper, the example above would create the following page tree in Confluence:
+
+- module-a
+  - 1.0
+    - example
+      - manual
+        - AnyPage-That-exists-underneath-manual-directory
+
+Using the mapper, you can control the page tree structure in Confluence. Hence, sticking to the example above, the page tree would look like this:
+
+- Manual
+  - AnyPage-That-exists-underneath-manual-directory
+
+#### Using Filters
 
 You can specify filters to only push certain files or folders instead of all. The filters must match the natural output structure of Antora. You can specify as many filters as you need. There are two different types of filters: `PathFilter` and `FileFilter`.
 

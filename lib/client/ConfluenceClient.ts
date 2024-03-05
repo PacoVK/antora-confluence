@@ -1,4 +1,8 @@
-import { ConfluenceAttachment, ConfluencePage } from "../types";
+import {
+  ConfluenceAttachment,
+  ConfluencePage,
+  ConfluencePageStatus,
+} from "../types";
 import { getLogger } from "../Logger";
 
 interface ConfluenceClientOptions {
@@ -82,17 +86,23 @@ export abstract class ConfluenceClient {
     return Buffer.from(credentials).toString("base64");
   }
 
-  public abstract createPage(page: ConfluencePage): Promise<Response>;
+  public abstract createPage(
+    page: ConfluencePage,
+    status: ConfluencePageStatus,
+  ): Promise<Response>;
 
   abstract updatePage(
     page: ConfluencePage,
     pageId: string,
     newVersion: number,
+    status?: ConfluencePageStatus,
   ): Promise<Response>;
 
   abstract createAttachment(
     attachment: ConfluenceAttachment,
   ): Promise<Response>;
+
+  abstract deletePage(pageId: string): Promise<Response>;
 
   abstract updateAttachment(
     attachment: ConfluenceAttachment,
@@ -100,5 +110,8 @@ export abstract class ConfluenceClient {
 
   abstract getAttachment(pageId: string, fileName: string): Promise<Response>;
 
-  abstract fetchPageIdByName(title: string): Promise<Response>;
+  abstract fetchPageIdByName(
+    title: string,
+    status?: ConfluencePageStatus,
+  ): Promise<Response>;
 }

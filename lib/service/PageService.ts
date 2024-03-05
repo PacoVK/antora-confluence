@@ -1,4 +1,8 @@
-import { ANTORA_DEFAULTS, Placeholder } from "../constants/Enum";
+import {
+  ANTORA_DEFAULTS,
+  PageIdentifier,
+  Placeholder,
+} from "../constants/Enum";
 import { getPageTitle } from "../parser/HtmlDomParser";
 import path from "node:path";
 import { sendRequest } from "./RESTApiService";
@@ -19,7 +23,15 @@ import rewriteCDATASections from "../transformer/CdataTransformer";
 import { ConfluenceClient } from "../client/ConfluenceClient";
 import { BufferFile } from "vinyl";
 import { getLogger } from "../Logger";
-import { FileFilter, PageFilter, PathFilter } from "../types";
+import {
+  ConfluencePageStatus,
+  FileFilter,
+  PageDeltaImage,
+  PageFilter,
+  PageRepresentation,
+  PathFilter,
+  PathMapper,
+} from "../types";
 
 const LOGGER = getLogger();
 
@@ -44,6 +56,7 @@ const matchesFilter = (file: BufferFile, filters: PageFilter[]) => {
 const buildPageStructure = async (
   files: BufferFile[],
   target: any,
+  mappers?: PathMapper[],
   filters?: PageFilter[],
 ) => {
   for await (const file of files) {
@@ -59,50 +72,72 @@ const buildPageStructure = async (
     if (filters && !matchesFilter(file, filters)) {
       continue;
     }
-    const parts = fileName.split("/");
+    let parts = fileName.split("/");
     let currentObject = target;
 
-    for (let i = 0; i < parts.length - 1; i++) {
-      let part;
-      if (i === 0) {
-        part = parts[i];
-      } else {
-        part = `[${parts[0]}]-${parts[i]}`;
-      }
+    let mapper: PathMapper | undefined;
+    if (mappers) {
+      mapper = mappers.find((mapper) => {
+        return fileName.startsWith(mapper.path);
+      });
+      if (mapper) {
+        if (!currentObject[mapper.target]) {
+          currentObject[mapper.target] = {};
+        }
 
-      if (!currentObject[part]) {
-        currentObject[part] = {};
+        currentObject = currentObject[mapper.target];
+        parts = fileName
+          .replace(`${Path.normalize(mapper.path)}/`, "")
+          .split("/");
       }
+    }
 
-      currentObject = currentObject[part];
+    if (!mapper || parts.length > 1) {
+      for (let i = 0; i < parts.length - 1; i++) {
+        let part;
+        if (i === 0) {
+          part = parts[i];
+        } else {
+          part = `[${parts[0]}]-${parts[i]}`;
+        }
+
+        if (!currentObject[part]) {
+          currentObject[part] = {};
+        }
+        currentObject = currentObject[part];
+      }
     }
 
     const lastPart = parts[parts.length - 1];
     let pageTitle = getPageTitle(file.contents.toString());
     pageTitle = target.get("inventory").get(pageTitle)
       ? `${parts[parts.length - 2]}-${pageTitle}`
-      : pageTitle;
-    const page = {
+      : pageTitle!;
+    const page: PageRepresentation = {
       fileName: lastPart,
       pageTitle,
-      content: file.contents,
       parent: parts[parts.length - 2],
       fqfn: file.path,
+      id: calculateHash(file.path),
     };
     if (target.get("inventory").get(pageTitle)) {
       target
         .get("inventory")
         .set(`${parts[parts.length - 2]}-${pageTitle}`, page);
+      target.get("flat").push({
+        ...page,
+        pageTitle: `${parts[parts.length - 2]}-${pageTitle}`,
+      });
     } else {
       target.get("inventory").set(pageTitle, page);
+      target.get("flat").push(page);
     }
     if (!currentObject["sibling_pages"]) {
-      currentObject["sibling_pages"] = [page];
+      currentObject["sibling_pages"] = [{ ...page, content: file.contents }];
     } else {
-      currentObject["sibling_pages"].push(page);
+      currentObject["sibling_pages"].push({ ...page, content: file.contents });
     }
   }
-  target.delete("inventory");
 };
 
 const createParentIfNotExists = async (
@@ -136,13 +171,33 @@ const createParentIfNotExists = async (
       `Component page does not exist, creating...[${parent}] with parent [${parentParentId}]`,
     );
     const { id } = (await sendRequest(
-      confluenceClient.createPage({
-        title: parent,
-        content: `<h1>${parent}</h1>`,
-        parentPageId: parentParentId,
-      }),
+      confluenceClient.createPage(
+        {
+          title: parent,
+          content: `<h1>${parent}</h1>`,
+          parentPageId: parentParentId,
+        },
+        ConfluencePageStatus.CURRENT,
+      ),
     )) as any;
     return { id, version: 1 };
+  }
+};
+
+const deletePages = async (
+  confluenceClient: ConfluenceClient,
+  removals: any[],
+) => {
+  for await (const page of removals) {
+    const response = await sendRequest(
+      confluenceClient.fetchPageIdByName(page.pageTitle),
+    );
+    if (response.results && response.results.length > 0) {
+      LOGGER.info(
+        `Deleting page ${page.pageTitle} with ID ${response.results[0].id}`,
+      );
+      await sendRequest(confluenceClient.deletePage(response.results[0].id));
+    }
   }
 };
 
@@ -151,6 +206,7 @@ const publish = async (
   outPutDir: string,
   pageTree: any,
   showBanner: boolean,
+  renames?: PageDeltaImage[],
   parent?: string,
 ) => {
   for (const key in pageTree) {
@@ -177,18 +233,27 @@ const publish = async (
             );
             pageId = id;
           } else {
+            const rename = renames?.filter((rename) => {
+              return confluencePage.title === rename.newOne.pageTitle;
+            })[0];
+            const fetchTitle = rename
+              ? rename.oldOne.pageTitle
+              : confluencePage.title;
             const componentPage = await sendRequest(
-              confluenceClient.fetchPageIdByName(confluencePage.title),
+              confluenceClient.fetchPageIdByName(fetchTitle),
             );
-            if (componentPage.results && componentPage.results.length > 0) {
+            if (
+              componentPage.results &&
+              componentPage.results.length > 0 &&
+              !rename
+            ) {
               const { id, version } = componentPage.results[0];
               const pageComp = parse(
                 componentPage.results[0].body.storage.value,
               );
-              const hashTag =
-                pageComp.getElementsByTagName("ac:placeholder")[0].text;
-              const match = hashTag.match(/#(.*)#/);
-              const remoteHash = match ? match[1] : null;
+              const remoteHash = pageComp.querySelector(
+                `.${PageIdentifier.LOCAL_HASH_TAG_ID}`,
+              )?.rawText;
               if (remoteHash !== localHash) {
                 LOGGER.debug(
                   `Component page exists, update...[${parent}] with id [${id}]`,
@@ -209,12 +274,20 @@ const publish = async (
                 LOGGER.info("Page hasn't changed!");
               }
             } else {
+              if (componentPage.results && componentPage.results.length > 0) {
+                const { id } = componentPage.results[0];
+                LOGGER.info(`Deleting old page with id ${id}`);
+                await confluenceClient.deletePage(id);
+              }
               const { id } = await sendRequest(
-                confluenceClient.createPage({
-                  title: `${confluencePage.title}`,
-                  content: confluencePage.content,
-                  parentPageId: parentId,
-                }),
+                confluenceClient.createPage(
+                  {
+                    title: `${confluencePage.title}`,
+                    content: confluencePage.content,
+                    parentPageId: parentId,
+                  },
+                  ConfluencePageStatus.CURRENT,
+                ),
               );
               pageId = id;
             }
@@ -278,6 +351,7 @@ const publish = async (
         outPutDir,
         pageTree[key],
         showBanner,
+        renames,
         key,
       );
     }
@@ -322,14 +396,64 @@ const processPage = (page: any, outPutDir: string, showBanner: boolean) => {
                     </ac:rich-text-body></ac:structured-macro>${htmlContent}`;
     }
     const localHash = calculateHash(htmlContent);
-    htmlContent += `<ac:placeholder>hash: #${localHash}#</ac:placeholder>`;
+    htmlContent += `<ac:placeholder><p class="${PageIdentifier.LOCAL_HASH_TAG_ID}">${localHash}</p></ac:placeholder>`;
     return {
       title: page.pageTitle,
       content: htmlContent,
       attachments: uploads,
       hash: localHash,
+      meta: {
+        id: page.id,
+      },
     };
   }
 };
 
-export { buildPageStructure, publish };
+const getPagesToBeRemoved = (
+  stateValues: PageRepresentation[],
+  pageStructure: Map<any, any>,
+) => {
+  const stateIds = stateValues.map((entry) => entry.id);
+  const removalIds = stateIds.filter((id) => {
+    return !pageStructure
+      .get("flat")
+      .find((page: PageRepresentation) => page.id === id);
+  });
+  return stateValues.filter((stateObject) => {
+    return removalIds.includes(stateObject.id);
+  });
+};
+
+const getRenamedPages = (
+  stateValues: PageRepresentation[],
+  pageStructure: Map<any, any>,
+) => {
+  const renames: PageDeltaImage[] = [];
+  stateValues.forEach((statePage) => {
+    const rename = pageStructure
+      .get("flat")
+      .find(
+        (page: PageRepresentation) =>
+          page.id === statePage.id && page.pageTitle !== statePage.pageTitle,
+      );
+    if (rename) {
+      renames.push({
+        newOne: rename,
+        oldOne: statePage,
+      });
+    }
+  });
+
+  LOGGER.debug(
+    `Found pages that need to be renamed ${JSON.stringify(renames)}`,
+  );
+  return renames;
+};
+
+export {
+  buildPageStructure,
+  publish,
+  deletePages,
+  getPagesToBeRemoved,
+  getRenamedPages,
+};

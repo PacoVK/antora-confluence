@@ -8,6 +8,9 @@ const sendRequest = async (call: Promise<Response>) => {
     if (response.status === 404) {
       return { results: [] };
     }
+    if (response.status === 204) {
+      return;
+    }
     if (response.status > 299) {
       LOGGER.warn(`Publish failed with response ${response.status}`);
       LOGGER.warn(await response.text());
