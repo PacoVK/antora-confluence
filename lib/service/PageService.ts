@@ -251,9 +251,9 @@ const publish = async (
               const pageComp = parse(
                 componentPage.results[0].body.storage.value,
               );
-              const remoteHash = pageComp.getElementById(
-                PageIdentifier.LOCAL_HASH_TAG_ID,
-              )?.text;
+              const remoteHash = pageComp.querySelector(
+                `.${PageIdentifier.LOCAL_HASH_TAG_ID}`,
+              )?.rawText;
               if (remoteHash !== localHash) {
                 LOGGER.debug(
                   `Component page exists, update...[${parent}] with id [${id}]`,
@@ -396,8 +396,7 @@ const processPage = (page: any, outPutDir: string, showBanner: boolean) => {
                     </ac:rich-text-body></ac:structured-macro>${htmlContent}`;
     }
     const localHash = calculateHash(htmlContent);
-    htmlContent += `<ac:placeholder id="${PageIdentifier.LOCAL_HASH_TAG_ID}">${localHash}#</ac:placeholder>
-                    <ac:placeholder id="${PageIdentifier.PAGE_ID_TAG_ID}">${page.id}</ac:placeholder>`;
+    htmlContent += `<ac:placeholder><p class="${PageIdentifier.LOCAL_HASH_TAG_ID}">${localHash}</p></ac:placeholder>`;
     return {
       title: page.pageTitle,
       content: htmlContent,

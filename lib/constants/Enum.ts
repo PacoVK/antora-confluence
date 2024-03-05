@@ -10,5 +10,4 @@ export enum ANTORA_DEFAULTS {
 
 export enum PageIdentifier {
   LOCAL_HASH_TAG_ID = "captain-local-hash",
-  PAGE_ID_TAG_ID = "captain-page-index",
 }

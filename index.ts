@@ -98,6 +98,23 @@ const publishToConfluence = async (
       value: JSON.stringify(Object.fromEntries(pageStructure.get("inventory"))),
     });
   } else {
+    await buildPageStructure(
+      files,
+      pageStructure,
+      destConfig.mapper,
+      destConfig.filter,
+    );
+
+    LOGGER.info("Publishing pages");
+
+    await publish(
+      confluenceClient,
+      outPutDir,
+      pageStructure,
+      renames,
+      destConfig.showBanner || false,
+    );
+
     await createState(
       confluenceClient,
       JSON.stringify(Object.fromEntries(pageStructure.get("inventory"))),

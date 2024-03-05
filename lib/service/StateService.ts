@@ -67,7 +67,8 @@ const createState = async (
 };
 
 const updateState = async (confluenceClient: ConfluenceClient, state: any) => {
-  LOGGER.info(`Updating state ${state.value}`);
+  LOGGER.info(`Updating state`);
+  LOGGER.debug(`${state.value}`);
   await sendRequest(
     confluenceClient.updatePage(
       {
