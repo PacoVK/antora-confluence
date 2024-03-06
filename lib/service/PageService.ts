@@ -78,7 +78,7 @@ const buildPageStructure = async (
     let mapper: PathMapper | undefined;
     if (mappers) {
       mapper = mappers.find((mapper) => {
-        return fileName.startsWith(mapper.path);
+        return Path.dirname(fileName).startsWith(mapper.path);
       });
       if (mapper) {
         if (!currentObject[mapper.target]) {
@@ -89,6 +89,18 @@ const buildPageStructure = async (
         parts = fileName
           .replace(`${Path.normalize(mapper.path)}/`, "")
           .split("/");
+      } else {
+        LOGGER.debug(
+          `No mapper found for ${fileName}, now checking if this page is a direct sibling of a mapper...`,
+        );
+        const mapper = mappers.find((mapper) => {
+          return path.dirname(fileName) === path.dirname(mapper.path);
+        });
+        if (mapper) {
+          parts = fileName
+            .replace(`${path.dirname(mapper.path)}/`, "")
+            .split("/");
+        }
       }
     }
 
