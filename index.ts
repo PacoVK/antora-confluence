@@ -45,12 +45,7 @@ const publishToConfluence = async (
     const stateValues: PageRepresentation[] = Object.values(
       JSON.parse(state.value),
     );
-    await buildPageStructure(
-      files,
-      pageStructure,
-      destConfig.mapper,
-      destConfig.filter,
-    );
+    await buildPageStructure(files, pageStructure, destConfig);
 
     const removals = getPagesToBeRemoved(stateValues, pageStructure);
     if (removals.length > 0) {
@@ -76,12 +71,7 @@ const publishToConfluence = async (
       value: JSON.stringify(Object.fromEntries(pageStructure.get("inventory"))),
     });
   } else {
-    await buildPageStructure(
-      files,
-      pageStructure,
-      destConfig.mapper,
-      destConfig.filter,
-    );
+    await buildPageStructure(files, pageStructure, destConfig);
 
     LOGGER.info("Publishing pages");
 

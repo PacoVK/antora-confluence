@@ -70,6 +70,7 @@ The Captain will keep track of the pages it has created in Confluence. This is t
 | ancestor-id      | Specify the overall parent page for your docs. Needs to be the pageId of the parent page, not the DisplayName.               | defaults to the space root |
 | show-banner      | Specify if all your pages should contain an info banner, that this pages were created by automation and changes may be lost. | false (default)            |
 | mapper           | Specify a custom mapper to map the Antora pages to Confluence pages.                                                         | [] (default)               |
+| exclude-files    | Specify files that should be excluded from the publishing process. Wildcards and Glob-patterns are supported                 | [] (default)               |
 
 #### Using Mappers
 
@@ -137,6 +138,21 @@ output:
             - module-a/1.0/example/manual.html
             - module-a/1.0/example/troubleshoot.html
             - module-c/1.0/foo/examples.html
+```
+
+#### Using Excludes
+
+You can specify files and folders that should be excluded from the publishing process. Wildcards and Glob-patterns are supported.
+
+```yaml
+output:
+  destinations:
+    - provider: antora-confluence
+      confluence-api: https://<redacted>.atlassian.net
+      confluence-space: my-spacekey
+      exclude-files:
+        - "**/*-tpl.html"
+        - "**/*_template.html"
 ```
 
 ### Authentication
