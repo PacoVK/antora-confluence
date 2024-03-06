@@ -24,6 +24,7 @@ import { ConfluenceClient } from "../client/ConfluenceClient";
 import { BufferFile } from "vinyl";
 import { getLogger } from "../Logger";
 import {
+  CaptainConfig,
   ConfluencePageStatus,
   FileFilter,
   PageDeltaImage,
@@ -32,6 +33,7 @@ import {
   PathFilter,
   PathMapper,
 } from "../types";
+import { fileIsExcluded } from "./FileExclusionService";
 
 const LOGGER = getLogger();
 
@@ -56,11 +58,13 @@ const matchesFilter = (file: BufferFile, filters: PageFilter[]) => {
 const buildPageStructure = async (
   files: BufferFile[],
   target: any,
-  mappers?: PathMapper[],
-  filters?: PageFilter[],
+  config: CaptainConfig,
 ) => {
   for await (const file of files) {
     const fileName = file.path;
+    const mappers = config.mapper;
+    const filters = config.filter;
+    const excludedFiles = config.excludeFiles;
     if (
       fileName.startsWith("_") ||
       !fileName.endsWith(".html") ||
@@ -69,7 +73,14 @@ const buildPageStructure = async (
       LOGGER.debug(`Skipping ${fileName}`);
       continue;
     }
+    if (excludedFiles && fileIsExcluded(fileName, excludedFiles)) {
+      LOGGER.info(
+        `Skipping ${fileName} because it has been explicitly excluded`,
+      );
+      continue;
+    }
     if (filters && !matchesFilter(file, filters)) {
+      LOGGER.debug(`Skipping ${fileName} because it does not match filter`);
       continue;
     }
     let parts = fileName.split("/");

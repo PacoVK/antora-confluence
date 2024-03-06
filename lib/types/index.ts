@@ -38,13 +38,14 @@ export type AttachmentRepresentation = {
 };
 
 export type CaptainConfig = {
-  editorVersion: "v1" | "v2";
   confluenceApi: string;
   confluenceSpace: string;
-  ancestorId: string;
-  showBanner: boolean;
-  mapper: PathMapper[];
-  filter: PageFilter[];
+  editorVersion?: "v1" | "v2";
+  ancestorId?: string;
+  showBanner?: boolean;
+  excludeFiles?: string[];
+  mapper?: PathMapper[];
+  filter?: PageFilter[];
 };
 
 export interface PathMapper {
