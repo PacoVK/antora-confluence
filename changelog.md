@@ -13,6 +13,18 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[semantic version
 
 ### changed
 
+## 0.2.1
+
+### fixes
+
+- [Fix direct page siblings of mapped paths](https://github.com/PacoVK/antora-confluence/pull/8)
+
+### added
+
+- [Implement file exclusion options](https://github.com/PacoVK/antora-confluence/pull/9)
+
+### changed
+
 ## 0.2.0
 
 ### fixes
