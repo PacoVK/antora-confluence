@@ -74,7 +74,7 @@ const buildPageStructure = async (
       continue;
     }
     if (excludedFiles && fileIsExcluded(fileName, excludedFiles)) {
-      LOGGER.info(
+      LOGGER.debug(
         `Skipping ${fileName} because it has been explicitly excluded`,
       );
       continue;
