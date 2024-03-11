@@ -25,6 +25,33 @@ The plugin uses the Confluence REST API to create and update pages in Confluence
 
 The plugin will also create a page tree to reflect the structure of the Antora pages in Confluence. Each Antora module version will be a child page of the page tree and the pages will be children of the module pages.
 
+Example:
+
+```
+- module-a
+  - 1.0
+    - user-guide
+      - manual.html
+- module-b
+  - 1.0
+    - user-guide
+      - manual.html
+```
+
+In the above example, we have two modules `module-a` and `module-b`. Each module has a page called `manual.html` under the `user-guide` directory.
+Both `manual.html` have the same pageTitle `User manual` defined in their source Asciidoc files. The plugin will create the following page tree in Confluence:
+
+```
+- module-a
+  - [module-a]-1.0
+    - [module-a]-user-guide
+      - [module-a]-manual
+- module-b
+  - [module-b]-1.0
+    - [module-b]-user-guide
+      - [module-b]-manual
+```
+
 You can customize the page tree by using the `mapper` option. This will allow you to map Antora pages to Confluence pages and control the structure of the page tree.
 
 ## Installation
@@ -54,6 +81,8 @@ output:
 ```
 
 For full reference, please head over to the [docs](https://docs.antora.org/antora/latest/playbook/configure-output/).
+
+> Info: If you are using Confluence on-prem, your `confluence-api` can either require a context path or not. If your Confluence API is available at `https://confluence.example.com/docs`, you need to specify the `confluence-api` as `https://<redacted>.com/confluence/docs`. If your Confluence API is available at `https://confluence.example.com/rest/api`, you need to specify the `confluence-api` as `https://confluence.example.com/rest/api` (mind there is no context path in the URL). Confluence Cloud does not require a context path, it always uses `/wiki` as context.
 
 ### State Management
 

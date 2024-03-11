@@ -10,6 +10,8 @@
     "sourceType": "module"
   },
   "plugins": ["@typescript-eslint"],
+  // ignore test Stubs
+  "ignorePatterns": ["*Stub.ts"],
   "rules": {
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/ban-ts-comment": "off",
