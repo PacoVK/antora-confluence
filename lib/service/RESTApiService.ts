@@ -8,6 +8,12 @@ const sendRequest = async (call: Promise<Response>) => {
     if (response.status === 404) {
       return { results: [] };
     }
+    if (response.status === 403) {
+      LOGGER.error(
+        `Publish failed due to insufficient permissions or wrong credentials`,
+      );
+      process.exit(1);
+    }
     if (response.status === 204) {
       return;
     }
