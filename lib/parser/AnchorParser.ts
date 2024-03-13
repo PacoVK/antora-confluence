@@ -1,6 +1,6 @@
 import { HTMLElement } from "node-html-parser";
 
-const parseAnchors = (content: HTMLElement) => {
+const rewriteAnchors = (content: HTMLElement) => {
   const anchors = new Map<string, string>();
   content.querySelectorAll("[id]").forEach((anchor) => {
     const name = anchor.getAttribute("id");
@@ -16,4 +16,4 @@ const parseAnchors = (content: HTMLElement) => {
   return anchors;
 };
 
-export default parseAnchors;
+export default rewriteAnchors;

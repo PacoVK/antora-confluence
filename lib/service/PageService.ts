@@ -10,7 +10,7 @@ import parse from "node-html-parser";
 import { readFileSync } from "fs";
 import { calculateHash, calculateHashOfStream } from "./HashCalculatorService";
 import Path from "path";
-import parseAnchors from "../parser/AnchorParser";
+import rewriteAnchors from "../parser/AnchorParser";
 import rewriteImages from "../transformer/ImageTransformer";
 import rewriteAdmonitionBlocks from "../transformer/AdmonitionBlockTransformer";
 import rewriteCodeBlocks from "../transformer/CodeBlockTransformer";
@@ -241,7 +241,7 @@ const publish = async (
       const parentId = parentPage?.id;
       const pages = pageTree[key];
       for (const page of pages) {
-        const confluencePage = processPage(page, outPutDir, showBanner);
+        const confluencePage = processPage(page, outPutDir, showBanner, pageTree);
         if (confluencePage) {
           const localHash = confluencePage.hash;
           let pageId;
@@ -361,7 +361,8 @@ const publish = async (
                   );
                 }
               } catch (e) {
-                LOGGER.error(`Error uploading attachment ${upload}`);
+                LOGGER.error(`Error uploading attachment ${upload.fileName}`);
+                LOGGER.error(e);
               }
             }
           }
@@ -381,10 +382,9 @@ const publish = async (
   }
 };
 
-const processPage = (page: any, outPutDir: string, showBanner: boolean) => {
+const processPage = (page: any, outPutDir: string, showBanner: boolean, pageTree: any) => {
   LOGGER.info(`Processing ${page.fileName}`);
   const baseUrl = path.join(process.cwd(), outPutDir, Path.dirname(page.fqfn));
-  const htmlFilePath = path.join(process.cwd(), outPutDir, page.fqfn);
   const htmlFileContent = page.content.toString();
   const dom = parse(htmlFileContent, {
     blockTextElements: { code: true },
@@ -394,12 +394,12 @@ const processPage = (page: any, outPutDir: string, showBanner: boolean) => {
   });
   const content = dom.querySelector("article.doc");
   if (content) {
-    const anchors = parseAnchors(content);
+    rewriteAnchors(content);
     const uploads = rewriteImages(content, baseUrl);
     rewriteAdmonitionBlocks(content);
     rewriteCodeBlocks(content);
     rewriteMarks(content);
-    rewriteInternalLinks(content, anchors, htmlFilePath);
+    rewriteInternalLinks(content, page.fqfn, pageTree);
     rewriteDescriptionLists(content);
     rewriteCDATASections(content);
 
