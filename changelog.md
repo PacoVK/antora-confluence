@@ -13,6 +13,16 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[semantic version
 
 ### changed
 
+## 0.2.2
+
+### fixes
+
+- [Link rewrites #11](https://github.com/PacoVK/antora-confluence/issues/11)
+
+### added
+
+### changed
+
 ## 0.2.1
 
 ### fixes
