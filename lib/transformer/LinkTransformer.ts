@@ -2,7 +2,7 @@ import parse, { HTMLElement } from "node-html-parser";
 import { Placeholder } from "../constants/Enum";
 import path from "node:path";
 import { getLogger } from "../Logger";
-import {PageRepresentation} from "../types";
+import { PageRepresentation } from "../types";
 
 const LOGGER = getLogger();
 
@@ -68,13 +68,17 @@ const rewriteDescriptionLists = (content: HTMLElement) => {
 };
 
 const findLinkedPageInTree = (pageTree: any, fqfn: string) => {
-  return pageTree.get("flat").find((page: PageRepresentation) => page.fqfn === fqfn) as PageRepresentation
-}
+  return pageTree
+    .get("flat")
+    .find(
+      (page: PageRepresentation) => page.fqfn === fqfn,
+    ) as PageRepresentation;
+};
 
 const rewriteInternalLinks = (
   content: HTMLElement,
   baseUrl: string,
-  pageTree: any
+  pageTree: any,
 ) => {
   content.querySelectorAll("a[href]").forEach((a) => {
     const href = a.getAttribute("href");
@@ -90,13 +94,18 @@ const rewriteInternalLinks = (
         !href.startsWith("//") &&
         !href.startsWith("mailto")
       ) {
-        pageTitle = findLinkedPageInTree(pageTree, path.join(path.dirname(baseUrl),href)).pageTitle;
-        LOGGER.debug(`Rewrite link to other page with title ${pageTitle} original link was ${href}`);
+        pageTitle = findLinkedPageInTree(
+          pageTree,
+          path.join(path.dirname(baseUrl), href),
+        ).pageTitle;
+        LOGGER.debug(
+          `Rewrite link to other page with title ${pageTitle} original link was ${href}`,
+        );
       }
       if (pageTitle && a.text) {
         const linkMacro =
           parse(`<ac:link ${anchor ? `ac:anchor="${anchor}"` : ""}>
-                                ${ anchor ? "" : `<ri:page ri:content-title="${pageTitle.trim()}"/><ri:page ri:content-title="${pageTitle.trim()}"/>`}
+                                ${anchor ? "" : `<ri:page ri:content-title="${pageTitle.trim()}"/><ri:page ri:content-title="${pageTitle.trim()}"/>`}
                                 <ac:plain-text-link-body>${Placeholder.CDATA_PLACEHOLDER_START}
                                     ${a.text.trim()}
                                 ${Placeholder.CDATA_PLACEHOLDER_END}</ac:plain-text-link-body>

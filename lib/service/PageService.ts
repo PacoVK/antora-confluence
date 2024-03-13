@@ -241,7 +241,12 @@ const publish = async (
       const parentId = parentPage?.id;
       const pages = pageTree[key];
       for (const page of pages) {
-        const confluencePage = processPage(page, outPutDir, showBanner, pageTree);
+        const confluencePage = processPage(
+          page,
+          outPutDir,
+          showBanner,
+          pageTree,
+        );
         if (confluencePage) {
           const localHash = confluencePage.hash;
           let pageId;
@@ -382,7 +387,12 @@ const publish = async (
   }
 };
 
-const processPage = (page: any, outPutDir: string, showBanner: boolean, pageTree: any) => {
+const processPage = (
+  page: any,
+  outPutDir: string,
+  showBanner: boolean,
+  pageTree: any,
+) => {
   LOGGER.info(`Processing ${page.fileName}`);
   const baseUrl = path.join(process.cwd(), outPutDir, Path.dirname(page.fqfn));
   const htmlFileContent = page.content.toString();
