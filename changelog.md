@@ -13,6 +13,8 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[semantic version
 
 ### changed
 
+- [Handle 403 responses properly](https://github.com/PacoVK/antora-confluence/pull/15)
+
 ## 0.2.2
 
 ### fixes
