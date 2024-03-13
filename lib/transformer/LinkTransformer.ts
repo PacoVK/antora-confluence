@@ -1,8 +1,8 @@
 import parse, { HTMLElement } from "node-html-parser";
 import { Placeholder } from "../constants/Enum";
 import path from "node:path";
-import { readFileSync } from "fs";
 import { getLogger } from "../Logger";
+import { PageRepresentation } from "../types";
 
 const LOGGER = getLogger();
 
@@ -67,10 +67,18 @@ const rewriteDescriptionLists = (content: HTMLElement) => {
   });
 };
 
+const findLinkedPageInTree = (pageTree: any, fqfn: string) => {
+  return pageTree
+    .get("flat")
+    .find(
+      (page: PageRepresentation) => page.fqfn === fqfn,
+    ) as PageRepresentation;
+};
+
 const rewriteInternalLinks = (
   content: HTMLElement,
-  anchors: Map<string, string>,
   baseUrl: string,
+  pageTree: any,
 ) => {
   content.querySelectorAll("a[href]").forEach((a) => {
     const href = a.getAttribute("href");
@@ -78,41 +86,28 @@ const rewriteInternalLinks = (
     let anchor;
     if (href) {
       if (href.startsWith("#")) {
+        // it is a local anchor
         anchor = href.substring(1);
-        pageTitle = `${anchors.get(anchor)}`;
+        LOGGER.debug(`Rewrite link to local anchor ${anchor}`);
       } else if (
         !href.startsWith("http") &&
         !href.startsWith("//") &&
         !href.startsWith("mailto")
       ) {
-        try {
-          const pageContent = parse(
-            readFileSync(path.join(path.dirname(baseUrl), href)).toString(
-              "utf-8",
-            ),
-          );
-          let pageTitleElement = pageContent.querySelector("h1.page");
-          if (pageTitleElement) {
-            pageTitle = pageTitleElement.text;
-          } else {
-            pageTitleElement = pageContent.querySelector("h2");
-            if (pageTitleElement) {
-              pageTitle = pageTitleElement.text;
-            }
-          }
-          pageTitle = `${pageTitle?.trim()}`;
-        } catch (e) {
-          LOGGER.error(
-            `Error reading file ${path.join(path.dirname(baseUrl), href)}`,
-          );
-        }
+        pageTitle = findLinkedPageInTree(
+          pageTree,
+          path.join(path.dirname(baseUrl), href),
+        ).pageTitle;
+        LOGGER.debug(
+          `Rewrite link to other page with title ${pageTitle} original link was ${href}`,
+        );
       }
       if (pageTitle && a.text) {
         const linkMacro =
-          parse(`<ac:link ${anchor ? 'ac:anchor="' + anchor + '"' : ""}>
-                                <ri:page ri:content-title="${pageTitle}"/>
+          parse(`<ac:link ${anchor ? `ac:anchor="${anchor}"` : ""}>
+                                ${anchor ? "" : `<ri:page ri:content-title="${pageTitle.trim()}"/><ri:page ri:content-title="${pageTitle.trim()}"/>`}
                                 <ac:plain-text-link-body>${Placeholder.CDATA_PLACEHOLDER_START}
-                                    ${a.text}
+                                    ${a.text.trim()}
                                 ${Placeholder.CDATA_PLACEHOLDER_END}</ac:plain-text-link-body>
                             </ac:link>`);
         a.replaceWith(linkMacro);

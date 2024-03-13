@@ -70,11 +70,14 @@ yarn add -D antora-confluence
 
 ## Usage
 
+> INFO: Captain relies on the default output provider `fs`. Make sure to have the `fs` provider in your `playbook.yml` file.
+
 To use the plugin, you need to add it to your Antora project. You can do this by adding the following to your output section in `playbook.yml`:
 
 ```yaml
 output:
   destinations:
+    - provider: fs
     - provider: antora-confluence
       confluence-api: https://<redacted>.atlassian.net
       confluence-space: my-spacekey
