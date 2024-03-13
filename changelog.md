@@ -11,6 +11,14 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[semantic version
 
 ### added
 
+### changed
+
+## 0.2.3
+
+### fixes
+
+### added
+
 - [Allow to skip this output plugin](https://github.com/PacoVK/antora-confluence/pull/16)
 
 ### changed
