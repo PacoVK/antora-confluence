@@ -191,6 +191,18 @@ output:
 
 The plugin uses the `CONFLUENCE_USERNAME` and `CONFLUENCE_PASSWORD` to authenticate with the Confluence API. You can set these values in the environment variables.
 
+### Disable this plugin at runtime
+
+You can disable the plugin at runtime by setting the environment variable `SKIP_CONFLUENCE` to `true`. This will prevent the plugin from running. As of now the actual value of the environment variable is not evaluated, only the presence of the variable is checked.
+
+Example
+
+```
+SKIP_CONFLUENCE=1 yarn generate-sites
+```
+
+The command above will not publish to Confluence, but generate the site as usual. This may be useful in CI/CD environments to test if the docs are building.
+
 #### Logging
 
 You can set the log level of the plugin by setting the `LOG_LEVEL` environment variable. The following levels are available:

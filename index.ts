@@ -27,6 +27,12 @@ const publishToConfluence = async (
   files: BufferFile[],
   playbook: AntoraPlaybook,
 ) => {
+  if (process.env.SKIP_CONFLUENCE) {
+    LOGGER.info(
+      "Skip publishing to Confluence, because SKIP_CONFLUENCE was set",
+    );
+    return;
+  }
   LOGGER.info(`Publishing ${playbook.site.title} to Confluence`);
   outPutDir = playbook.output.dir || ANTORA_DEFAULTS.OUTPUT_DIR;
   confluenceClient = new ConfluenceClientV1({
