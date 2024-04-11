@@ -9,6 +9,8 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[semantic version
 
 ### fixes
 
+- [Cannot read properties of undefined (reading 'pageTitle') #19](https://github.com/PacoVK/antora-confluence/issues/19)
+
 ### added
 
 ### changed
