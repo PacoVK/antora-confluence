@@ -67,6 +67,7 @@ const publishToConfluence = async (
       outPutDir,
       pageStructure,
       destConfig.showBanner || false,
+      pageStructure.get("flat"),
       renames,
     );
 
@@ -86,6 +87,7 @@ const publishToConfluence = async (
       outPutDir,
       pageStructure,
       destConfig.showBanner || false,
+      pageStructure.get("flat"),
     );
 
     await createState(

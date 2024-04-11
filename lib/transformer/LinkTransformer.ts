@@ -68,35 +68,41 @@ const rewriteDescriptionLists = (content: HTMLElement) => {
 };
 
 const findLinkedPageInTree = (pageTree: any, fqfn: string) => {
-  return pageTree
-    .get("flat")
-    .find(
-      (page: PageRepresentation) => page.fqfn === fqfn,
-    ) as PageRepresentation;
+  return pageTree.find(
+    (page: PageRepresentation) => page.fqfn === fqfn,
+  ) as PageRepresentation;
 };
 
 const rewriteInternalLinks = (
   content: HTMLElement,
   baseUrl: string,
-  pageTree: any,
+  flatPages: any,
 ) => {
   content.querySelectorAll("a[href]").forEach((a) => {
     const href = a.getAttribute("href");
     let pageTitle;
     let anchor;
+    let localAnchor = false;
     if (href) {
       if (href.startsWith("#")) {
         // it is a local anchor
         anchor = href.substring(1);
+        localAnchor = true;
         LOGGER.debug(`Rewrite link to local anchor ${anchor}`);
       } else if (
         !href.startsWith("http") &&
         !href.startsWith("//") &&
         !href.startsWith("mailto")
       ) {
+        let linkedPageFqfn = href;
+        if (href.includes("#")) {
+          const hrefWithAnchor = href.split("#");
+          linkedPageFqfn = hrefWithAnchor[0];
+          anchor = hrefWithAnchor[1];
+        }
         pageTitle = findLinkedPageInTree(
-          pageTree,
-          path.join(path.dirname(baseUrl), href),
+          flatPages,
+          path.join(path.dirname(baseUrl), linkedPageFqfn),
         ).pageTitle;
         LOGGER.debug(
           `Rewrite link to other page with title ${pageTitle} original link was ${href}`,
@@ -105,7 +111,7 @@ const rewriteInternalLinks = (
       if (pageTitle && a.text) {
         const linkMacro =
           parse(`<ac:link ${anchor ? `ac:anchor="${anchor}"` : ""}>
-                                ${anchor ? "" : `<ri:page ri:content-title="${pageTitle.trim()}"/><ri:page ri:content-title="${pageTitle.trim()}"/>`}
+                                ${localAnchor ? "" : `<ri:page ri:content-title="${pageTitle.trim()}"/>`}
                                 <ac:plain-text-link-body>${Placeholder.CDATA_PLACEHOLDER_START}
                                     ${a.text.trim()}
                                 ${Placeholder.CDATA_PLACEHOLDER_END}</ac:plain-text-link-body>
