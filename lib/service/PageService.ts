@@ -132,7 +132,7 @@ const buildPageStructure = async (
     }
 
     const lastPart = parts[parts.length - 1];
-    let pageTitle = getPageTitle(file.contents.toString());
+    let pageTitle = getPageTitle(file.contents.toString("utf-8"));
     pageTitle = target.get("inventory").get(pageTitle)
       ? `${parts[parts.length - 2]}-${pageTitle}`
       : pageTitle!;
@@ -229,6 +229,7 @@ const publish = async (
   outPutDir: string,
   pageTree: any,
   showBanner: boolean,
+  flatPages: any,
   renames?: PageDeltaImage[],
   parent?: string,
 ) => {
@@ -245,7 +246,7 @@ const publish = async (
           page,
           outPutDir,
           showBanner,
-          pageTree,
+          flatPages,
         );
         if (confluencePage) {
           const localHash = confluencePage.hash;
@@ -380,6 +381,7 @@ const publish = async (
         outPutDir,
         pageTree[key],
         showBanner,
+        flatPages,
         renames,
         key,
       );
@@ -391,11 +393,11 @@ const processPage = (
   page: any,
   outPutDir: string,
   showBanner: boolean,
-  pageTree: any,
+  flatPages: any,
 ) => {
   LOGGER.info(`Processing ${page.fileName}`);
   const baseUrl = path.join(process.cwd(), outPutDir, Path.dirname(page.fqfn));
-  const htmlFileContent = page.content.toString();
+  const htmlFileContent = page.content.toString("utf-8");
   const dom = parse(htmlFileContent, {
     blockTextElements: { code: true },
     voidTag: {
@@ -409,7 +411,7 @@ const processPage = (
     rewriteAdmonitionBlocks(content);
     rewriteCodeBlocks(content);
     rewriteMarks(content);
-    rewriteInternalLinks(content, page.fqfn, pageTree);
+    rewriteInternalLinks(content, page.fqfn, flatPages);
     rewriteDescriptionLists(content);
     rewriteCDATASections(content);
 

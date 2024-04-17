@@ -9,7 +9,7 @@ const LOGGER = getLogger();
 
 const decodeState = (state: string) => {
   LOGGER.debug(`Decoding ${state}`);
-  return inflateSync(Buffer.from(state, "base64")).toString();
+  return inflateSync(Buffer.from(state, "base64")).toString("utf-8");
 };
 
 const encodeState = (state: string) => {
