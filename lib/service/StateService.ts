@@ -62,7 +62,7 @@ const createState = async (
   return {
     id: updateResponse.id,
     value: decodeState(state),
-    version: updateResponse.version.number,
+    version: updateResponse.version?.number ?? 1,
   };
 };
 
