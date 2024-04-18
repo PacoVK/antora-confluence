@@ -189,7 +189,17 @@ output:
 
 ### Authentication
 
-The plugin uses the `CONFLUENCE_USERNAME` and `CONFLUENCE_PASSWORD` to authenticate with the Confluence API. You can set these values in the environment variables.
+You can authenticate with the Confluence API using the following methods:
+
+#### Personal Access Token (PAT)
+
+The plugin uses `CONFLUENCE_PAT` to authenticate with the Confluence API via token. You can set this value in the environment variables.
+
+#### Basic Authentication
+
+The plugin uses `CONFLUENCE_USERNAME` and `CONFLUENCE_PASSWORD` to authenticate with the Confluence API via `basic auth`. You can set these values in the environment variables.
+
+> Info: The order above is the priority. If you set both, the plugin will use the PAT.
 
 ### Disable this plugin at runtime
 

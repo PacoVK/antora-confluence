@@ -25,7 +25,7 @@ export abstract class ConfluenceClient {
   readonly API_V2_PATH;
   readonly EDITOR_VERSION;
   readonly BASE_URL;
-  readonly CREDENTIALS;
+  readonly AUTHORIZATION_HEADER;
   readonly ANCESTOR_ID;
 
   constructor(config: ConfluenceClientOptions) {
@@ -40,7 +40,7 @@ export abstract class ConfluenceClient {
     const apiContext = this.constructApiContext(config.baseUrl);
     this.API_V1_PATH = apiContext + this.API_V1_IDENTIFIER;
     this.API_V2_PATH = apiContext + this.API_V2_IDENTIFIER;
-    this.CREDENTIALS = this.encodeCredentials();
+    this.AUTHORIZATION_HEADER = this.buildAuthHeader();
     this.ANCESTOR_ID = config.ancestorId;
   }
 
@@ -87,9 +87,12 @@ export abstract class ConfluenceClient {
     return "";
   }
 
-  encodeCredentials() {
+  buildAuthHeader() {
+    if (process.env.CONFLUENCE_PAT) {
+      return `Bearer ${process.env.CONFLUENCE_PAT}`;
+    }
     const credentials = `${process.env.CONFLUENCE_USERNAME}:${process.env.CONFLUENCE_PASSWORD}`;
-    return Buffer.from(credentials).toString("base64");
+    return `Basic ${Buffer.from(credentials).toString("base64")}`;
   }
 
   public abstract createPage(
