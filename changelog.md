@@ -13,6 +13,16 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[semantic version
 
 ### changed
 
+## 0.2.5
+
+### fixes
+
+- [Pages in DRAFT mode do not always return page versions after creation #19](https://github.com/PacoVK/antora-confluence/issues/19)
+
+### added
+
+### changed
+
 ## 0.2.4
 
 ### fixes
