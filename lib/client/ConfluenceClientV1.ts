@@ -21,7 +21,7 @@ export class ConfluenceClientV1 extends ConfluenceClient {
       headers: {
         "Content-Type": "application/json",
         "Request-Content-Type": "application/json",
-        Authorization: `Basic ${this.CREDENTIALS}`,
+        Authorization: this.AUTHORIZATION_HEADER,
       },
       body: JSON.stringify({
         type: "page",
@@ -76,7 +76,7 @@ export class ConfluenceClientV1 extends ConfluenceClient {
       headers: {
         "Content-Type": "application/json",
         "Request-Content-Type": "application/json",
-        Authorization: `Basic ${this.CREDENTIALS}`,
+        Authorization: this.AUTHORIZATION_HEADER,
       },
       body: JSON.stringify({
         type: "page",
@@ -125,7 +125,7 @@ export class ConfluenceClientV1 extends ConfluenceClient {
         ...formData.getHeaders(),
         Accept: "application/json",
         "X-Atlassian-Token": "nocheck",
-        Authorization: `Basic ${this.CREDENTIALS}`,
+        Authorization: this.AUTHORIZATION_HEADER,
       },
     });
   }
@@ -144,7 +144,7 @@ export class ConfluenceClientV1 extends ConfluenceClient {
       headers: {
         "Content-Type": "application/json",
         "Request-Content-Type": "application/json",
-        Authorization: `Basic ${this.CREDENTIALS}`,
+        Authorization: this.AUTHORIZATION_HEADER,
       },
     });
   }
@@ -158,7 +158,7 @@ export class ConfluenceClientV1 extends ConfluenceClient {
       headers: {
         "Content-Type": "application/json",
         "Request-Content-Type": "application/json",
-        Authorization: `Basic ${this.CREDENTIALS}`,
+        Authorization: this.AUTHORIZATION_HEADER,
       },
     });
   }
@@ -173,7 +173,7 @@ export class ConfluenceClientV1 extends ConfluenceClient {
       headers: {
         "Content-Type": "application/json",
         "Request-Content-Type": "application/json",
-        Authorization: `Basic ${this.CREDENTIALS}`,
+        Authorization: this.AUTHORIZATION_HEADER,
       },
     });
   }
@@ -195,7 +195,7 @@ export class ConfluenceClientV1 extends ConfluenceClient {
         ...formData.getHeaders(),
         Accept: "application/json",
         "X-Atlassian-Token": "nocheck",
-        Authorization: `Basic ${this.CREDENTIALS}`,
+        Authorization: this.AUTHORIZATION_HEADER,
       },
     });
   }

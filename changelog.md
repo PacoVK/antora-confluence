@@ -11,6 +11,8 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[semantic version
 
 ### added
 
+- [Add support for Confluence authorization via PAT #23](https://github.com/PacoVK/antora-confluence/issues/23)
+
 ### changed
 
 - [Use node URL to construct API URL #19](https://github.com/PacoVK/antora-confluence/issues/19)
