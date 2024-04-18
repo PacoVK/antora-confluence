@@ -13,6 +13,8 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[semantic version
 
 ### changed
 
+- [Use node URL to construct API URL #19](https://github.com/PacoVK/antora-confluence/issues/19)
+
 ## 0.2.5
 
 ### fixes
