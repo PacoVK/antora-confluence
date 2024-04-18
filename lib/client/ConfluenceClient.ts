@@ -29,7 +29,7 @@ export abstract class ConfluenceClient {
   readonly ANCESTOR_ID;
 
   constructor(config: ConfluenceClientOptions) {
-    this.BASE_URL = config.baseUrl.origin;
+    this.BASE_URL = new URL(config.baseUrl.origin);
     this.SPACE_KEY = config.spaceKey;
     if (config.editorVersion === "v2") {
       LOGGER.warn(
@@ -46,6 +46,12 @@ export abstract class ConfluenceClient {
 
   async init() {
     this.fetch = await this.importFetch();
+  }
+
+  buildUrlWithPath(path: string): URL {
+    const url = this.BASE_URL;
+    url.pathname = path;
+    return url;
   }
 
   async importFetch() {

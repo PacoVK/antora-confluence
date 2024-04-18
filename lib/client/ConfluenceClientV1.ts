@@ -15,7 +15,8 @@ export class ConfluenceClientV1 extends ConfluenceClient {
     status: ConfluencePageStatus,
   ): Promise<Response> {
     LOGGER.info(`Creating page ${page.title}`);
-    return this.fetch(`${this.BASE_URL}/${this.API_V1_PATH}/content`, {
+    const apiUrl = this.buildUrlWithPath(`${this.API_V1_PATH}/content`);
+    return this.fetch(apiUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -67,44 +68,44 @@ export class ConfluenceClientV1 extends ConfluenceClient {
     status?: ConfluencePageStatus,
   ): Promise<Response> {
     LOGGER.info(`Updating page ${page.title} with new version ${newVersion}`);
-    return this.fetch(
-      `${this.BASE_URL}/${this.API_V1_PATH}/content/${pageId}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "Request-Content-Type": "application/json",
-          Authorization: `Basic ${this.CREDENTIALS}`,
-        },
-        body: JSON.stringify({
-          type: "page",
-          version: {
-            number: newVersion,
-          },
-          title: page.title,
-          status,
-          metadata: {
-            properties: {
-              editor: {
-                value: this.EDITOR_VERSION,
-              },
-              "content-appearance-draft": {
-                value: "full-width",
-              },
-              "content-appearance-published": {
-                value: "full-width",
-              },
-            },
-          },
-          body: {
-            storage: {
-              value: page.content,
-              representation: "storage",
-            },
-          },
-        }),
-      },
+    const apiUrl = this.buildUrlWithPath(
+      `${this.API_V1_PATH}/content/${pageId}`,
     );
+    return this.fetch(apiUrl, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Request-Content-Type": "application/json",
+        Authorization: `Basic ${this.CREDENTIALS}`,
+      },
+      body: JSON.stringify({
+        type: "page",
+        version: {
+          number: newVersion,
+        },
+        title: page.title,
+        status,
+        metadata: {
+          properties: {
+            editor: {
+              value: this.EDITOR_VERSION,
+            },
+            "content-appearance-draft": {
+              value: "full-width",
+            },
+            "content-appearance-published": {
+              value: "full-width",
+            },
+          },
+        },
+        body: {
+          storage: {
+            value: page.content,
+            representation: "storage",
+          },
+        },
+      }),
+    });
   }
 
   createAttachment(attachment: ConfluenceAttachment): Promise<Response> {
@@ -114,64 +115,67 @@ export class ConfluenceClientV1 extends ConfluenceClient {
     });
     formData.append("comment", attachment.comment);
     formData.append("minorEdit", "true");
-    return this.fetch(
-      `${this.BASE_URL}/${this.API_V1_PATH}/content/${attachment.pageId}/child/attachment`,
-      {
-        method: "POST",
-        body: formData,
-        headers: {
-          ...formData.getHeaders(),
-          Accept: "application/json",
-          "X-Atlassian-Token": "nocheck",
-          Authorization: `Basic ${this.CREDENTIALS}`,
-        },
-      },
+    const apiUrl = this.buildUrlWithPath(
+      `${this.API_V1_PATH}/content/${attachment.pageId}/child/attachment`,
     );
+    return this.fetch(apiUrl, {
+      method: "POST",
+      body: formData,
+      headers: {
+        ...formData.getHeaders(),
+        Accept: "application/json",
+        "X-Atlassian-Token": "nocheck",
+        Authorization: `Basic ${this.CREDENTIALS}`,
+      },
+    });
   }
 
   fetchPageIdByName(
     title: string,
     status?: ConfluencePageStatus,
   ): Promise<Response> {
-    return this.fetch(
-      `${this.BASE_URL}/${this.API_V1_PATH}/content?spaceKey=${this.SPACE_KEY}&title=${encodeURIComponent(title)}&status=${status || ConfluencePageStatus.CURRENT}&expand=body.storage,version`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "Request-Content-Type": "application/json",
-          Authorization: `Basic ${this.CREDENTIALS}`,
-        },
+    const apiUrl = this.buildUrlWithPath(`${this.API_V1_PATH}/content`);
+    apiUrl.searchParams.set("spaceKey", this.SPACE_KEY);
+    apiUrl.searchParams.set("title", title);
+    apiUrl.searchParams.set("status", status || ConfluencePageStatus.CURRENT);
+    apiUrl.searchParams.set("expand", "body.storage,version");
+    return this.fetch(apiUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Request-Content-Type": "application/json",
+        Authorization: `Basic ${this.CREDENTIALS}`,
       },
-    );
+    });
   }
 
   deletePage(pageId: string): Promise<Response> {
-    return this.fetch(
-      `${this.BASE_URL}/${this.API_V1_PATH}/content/${pageId}`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          "Request-Content-Type": "application/json",
-          Authorization: `Basic ${this.CREDENTIALS}`,
-        },
-      },
+    const apiUrl = this.buildUrlWithPath(
+      `${this.API_V1_PATH}/content/${pageId}`,
     );
+    return this.fetch(apiUrl, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Request-Content-Type": "application/json",
+        Authorization: `Basic ${this.CREDENTIALS}`,
+      },
+    });
   }
 
   getAttachment(pageId: string, fileName: string): Promise<Response> {
-    return this.fetch(
-      `${this.BASE_URL}/${this.API_V1_PATH}/content/${pageId}/child/attachment?filename=${fileName}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "Request-Content-Type": "application/json",
-          Authorization: `Basic ${this.CREDENTIALS}`,
-        },
-      },
+    const apiUrl = this.buildUrlWithPath(
+      `${this.API_V1_PATH}/content/${pageId}/child/attachment`,
     );
+    apiUrl.searchParams.set("filename", fileName);
+    return this.fetch(apiUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Request-Content-Type": "application/json",
+        Authorization: `Basic ${this.CREDENTIALS}`,
+      },
+    });
   }
 
   updateAttachment(attachment: ConfluenceAttachment): Promise<Response> {
@@ -181,18 +185,18 @@ export class ConfluenceClientV1 extends ConfluenceClient {
     });
     formData.append("comment", attachment.comment);
     formData.append("minorEdit", "true");
-    return this.fetch(
-      `${this.BASE_URL}/${this.API_V1_PATH}/content/${attachment.pageId}/child/attachment/${attachment.attachmentId}/data`,
-      {
-        method: "POST",
-        body: formData,
-        headers: {
-          ...formData.getHeaders(),
-          Accept: "application/json",
-          "X-Atlassian-Token": "nocheck",
-          Authorization: `Basic ${this.CREDENTIALS}`,
-        },
-      },
+    const apiUrl = this.buildUrlWithPath(
+      `${this.API_V1_PATH}/content/${attachment.pageId}/child/attachment/${attachment.attachmentId}/data`,
     );
+    return this.fetch(apiUrl, {
+      method: "POST",
+      body: formData,
+      headers: {
+        ...formData.getHeaders(),
+        Accept: "application/json",
+        "X-Atlassian-Token": "nocheck",
+        Authorization: `Basic ${this.CREDENTIALS}`,
+      },
+    });
   }
 }
