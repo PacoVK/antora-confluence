@@ -13,7 +13,9 @@ describe("ConfluenceClient", () => {
       ...config,
       baseUrl: new URL("https://confluence.example.com/rest/api"),
     });
-    expect(confluenceClient.BASE_URL).toBe("https://confluence.example.com");
+    expect(confluenceClient.BASE_URL.toString()).toBe(
+      "https://confluence.example.com/",
+    );
     expect(confluenceClient.API_V1_PATH).toBe("/rest/api");
     expect(confluenceClient.API_V2_PATH).toBe("/api/v2");
   });
@@ -23,7 +25,9 @@ describe("ConfluenceClient", () => {
       ...config,
       baseUrl: new URL("https://confluence.example.com"),
     });
-    expect(confluenceClient.BASE_URL).toBe("https://confluence.example.com");
+    expect(confluenceClient.BASE_URL.toString()).toBe(
+      "https://confluence.example.com/",
+    );
     expect(confluenceClient.API_V1_PATH).toBe("/wiki/rest/api");
     expect(confluenceClient.API_V2_PATH).toBe("/wiki/api/v2");
   });
@@ -33,7 +37,9 @@ describe("ConfluenceClient", () => {
       ...config,
       baseUrl: new URL("https://confluence.example.com/"),
     });
-    expect(confluenceClient.BASE_URL).toBe("https://confluence.example.com");
+    expect(confluenceClient.BASE_URL.toString()).toBe(
+      "https://confluence.example.com/",
+    );
     expect(confluenceClient.API_V1_PATH).toBe("/wiki/rest/api");
     expect(confluenceClient.API_V2_PATH).toBe("/wiki/api/v2");
   });
@@ -43,7 +49,9 @@ describe("ConfluenceClient", () => {
       ...config,
       baseUrl: new URL("https://confluence.example.com/custom"),
     });
-    expect(confluenceClient.BASE_URL).toBe("https://confluence.example.com");
+    expect(confluenceClient.BASE_URL.toString()).toBe(
+      "https://confluence.example.com/",
+    );
     expect(confluenceClient.API_V1_PATH).toBe("/custom/rest/api");
     expect(confluenceClient.API_V2_PATH).toBe("/custom/api/v2");
   });
