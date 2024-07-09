@@ -1,3 +1,5 @@
+import { HTMLElement } from "node-html-parser";
+
 export type ConfluencePage = {
   title: string;
   content: string;
@@ -73,3 +75,10 @@ export type AntoraPlaybook = {
     dir?: string;
   };
 };
+
+export type IConversionOutput = {
+  content: HTMLElement;
+};
+
+export interface ITransformerOutput extends IConversionOutput {}
+export interface IParserOutput extends IConversionOutput {}

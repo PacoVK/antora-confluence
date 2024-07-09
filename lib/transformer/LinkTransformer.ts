@@ -2,7 +2,7 @@ import parse, { HTMLElement } from "node-html-parser";
 import { Placeholder } from "../constants/Enum";
 import path from "node:path";
 import { getLogger } from "../Logger";
-import { PageRepresentation } from "../types";
+import { ITransformerOutput, PageRepresentation } from "../types";
 
 const LOGGER = getLogger();
 
@@ -10,7 +10,7 @@ enum LinkTags {
   dt = "th",
   dd = "td",
 }
-const rewriteDescriptionLists = (content: HTMLElement) => {
+const rewriteDescriptionLists = (content: HTMLElement): ITransformerOutput => {
   content.querySelectorAll("dl").forEach((dl) => {
     dl.querySelectorAll("div").forEach((div) => {
       const child = div.firstChild;
@@ -65,6 +65,9 @@ const rewriteDescriptionLists = (content: HTMLElement) => {
     const node = dl.firstChild;
     dl.replaceWith("<table></table>").appendChild(node!);
   });
+  return {
+    content,
+  };
 };
 
 const findLinkedPageInTree = (pageTree: any, fqfn: string) => {
@@ -77,7 +80,7 @@ const rewriteInternalLinks = (
   content: HTMLElement,
   baseUrl: string,
   flatPages: any,
-) => {
+): ITransformerOutput => {
   content.querySelectorAll("a[href]").forEach((a) => {
     const href = a.getAttribute("href");
     let pageTitle;
@@ -120,6 +123,9 @@ const rewriteInternalLinks = (
       }
     }
   });
+  return {
+    content,
+  };
 };
 
 export { rewriteDescriptionLists, rewriteInternalLinks };

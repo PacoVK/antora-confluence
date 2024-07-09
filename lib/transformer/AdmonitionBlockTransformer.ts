@@ -1,4 +1,5 @@
 import { HTMLElement } from "node-html-parser";
+import { ITransformerOutput } from "../types";
 
 enum AdmonitionType {
   note = "info",
@@ -23,13 +24,16 @@ const parseAdmonitionBlock = (block: HTMLElement, type: AdmonitionType) => {
   block.remove();
 };
 
-const rewriteAdmonitionBlocks = (content: HTMLElement) => {
+const rewriteAdmonitionBlocks = (content: HTMLElement): ITransformerOutput => {
   Object.keys(AdmonitionType).forEach((key: string) => {
     content.querySelectorAll(`.admonitionblock.${key}`).forEach((element) => {
       //@ts-ignore
       parseAdmonitionBlock(element, AdmonitionType[key]);
     });
   });
+  return {
+    content,
+  };
 };
 
 export default rewriteAdmonitionBlocks;

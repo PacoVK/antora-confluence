@@ -1,11 +1,18 @@
 import { HTMLElement } from "node-html-parser";
 import Path from "path";
-import { AttachmentRepresentation } from "../types";
+import { AttachmentRepresentation, ITransformerOutput } from "../types";
 import { getLogger } from "../Logger";
+
+interface ImageTransformerOutput extends ITransformerOutput {
+  uploads: AttachmentRepresentation[];
+}
 
 const LOGGER = getLogger();
 
-const rewriteImages = (content: HTMLElement, baseUrl: string) => {
+const rewriteImages = (
+  content: HTMLElement,
+  baseUrl: string,
+): ImageTransformerOutput => {
   const uploads: AttachmentRepresentation[] = [];
   content.querySelectorAll("img").forEach((img) => {
     const src = img.getAttribute("src");
@@ -43,7 +50,10 @@ const rewriteImages = (content: HTMLElement, baseUrl: string) => {
     }
     img.remove();
   });
-  return uploads;
+  return {
+    uploads,
+    content,
+  };
 };
 
 export default rewriteImages;
