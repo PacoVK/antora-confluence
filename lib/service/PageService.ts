@@ -10,16 +10,6 @@ import parse from "node-html-parser";
 import { readFileSync } from "fs";
 import { calculateHash, calculateHashOfStream } from "./HashCalculatorService";
 import Path from "path";
-import rewriteAnchors from "../parser/AnchorParser";
-import rewriteImages from "../transformer/ImageTransformer";
-import rewriteAdmonitionBlocks from "../transformer/AdmonitionBlockTransformer";
-import rewriteCodeBlocks from "../transformer/CodeBlockTransformer";
-import rewriteMarks from "../transformer/MarkTransformer";
-import {
-  rewriteDescriptionLists,
-  rewriteInternalLinks,
-} from "../transformer/LinkTransformer";
-import rewriteCDATASections from "../transformer/CdataTransformer";
 import { ConfluenceClient } from "../client/ConfluenceClient";
 import { BufferFile } from "vinyl";
 import { getLogger } from "../Logger";
@@ -34,6 +24,7 @@ import {
   PathMapper,
 } from "../types";
 import { fileIsExcluded } from "./FileExclusionService";
+import { convertHtmlToConfluence } from "./HtmlToConfluenceConverter";
 
 const LOGGER = getLogger();
 
@@ -404,16 +395,14 @@ const processPage = (
       closingSlash: true,
     },
   });
-  const content = dom.querySelector("article.doc");
-  if (content) {
-    rewriteAnchors(content);
-    const uploads = rewriteImages(content, baseUrl);
-    rewriteAdmonitionBlocks(content);
-    rewriteCodeBlocks(content);
-    rewriteMarks(content);
-    rewriteInternalLinks(content, page.fqfn, flatPages);
-    rewriteDescriptionLists(content);
-    rewriteCDATASections(content);
+  const htmlInput = dom.querySelector("article.doc");
+  if (htmlInput) {
+    const { uploads, content } = convertHtmlToConfluence(
+      htmlInput,
+      baseUrl,
+      page,
+      flatPages,
+    );
 
     let htmlContent = content
       .toString()

@@ -1,7 +1,8 @@
 import parse, { HTMLElement } from "node-html-parser";
 import { Placeholder } from "../constants/Enum";
+import { ITransformerOutput } from "../types";
 
-const rewriteCDATASections = (content: HTMLElement) => {
+const rewriteCDATASections = (content: HTMLElement): ITransformerOutput => {
   let contentString = content.removeWhitespace().toString();
   let cdataStart = contentString.indexOf(Placeholder.CDATA_PLACEHOLDER_START);
   while (cdataStart > -1) {
@@ -29,9 +30,9 @@ const rewriteCDATASections = (content: HTMLElement) => {
       cdataStart + 1,
     );
   }
-  content.replaceWith(
-    parse(contentString, { blockTextElements: { code: true } }),
-  );
+  return {
+    content: parse(contentString, { blockTextElements: { code: true } }),
+  };
 };
 
 export default rewriteCDATASections;

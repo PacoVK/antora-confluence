@@ -1,7 +1,8 @@
 import parse, { HTMLElement } from "node-html-parser";
 import { Placeholder } from "../constants/Enum";
+import { ITransformerOutput } from "../types";
 
-const rewriteCodeBlocks = (content: HTMLElement) => {
+const rewriteCodeBlocks = (content: HTMLElement): ITransformerOutput => {
   content.querySelectorAll("pre > code").forEach((code) => {
     const parent = code.parentNode;
     const language = code.getAttribute("data-lang");
@@ -15,7 +16,9 @@ const rewriteCodeBlocks = (content: HTMLElement) => {
             </ac:structured-macro>`);
     parent.replaceWith(codeMacro);
   });
-  return content;
+  return {
+    content,
+  };
 };
 
 export default rewriteCodeBlocks;
