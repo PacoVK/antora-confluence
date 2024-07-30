@@ -31,7 +31,12 @@ const rewriteCDATASections = (content: HTMLElement): ITransformerOutput => {
     );
   }
   return {
-    content: parse(contentString, { blockTextElements: { code: true } }),
+    content: parse(contentString, {
+      blockTextElements: { code: true },
+      voidTag: {
+        closingSlash: true,
+      },
+    }),
   };
 };
 
