@@ -3,7 +3,9 @@ import { ITransformerOutput } from "../types";
 
 const rewriteMarks = (content: HTMLElement): ITransformerOutput => {
   content.querySelectorAll("mark").forEach((mark) => {
-    mark.replaceWith(`<span style="background:#ff0;color:#000">${mark.childNodes}</style>`);
+    mark.replaceWith(
+      `<span style="background:#ff0;color:#000">${mark.childNodes}</style>`,
+    );
   });
   return {
     content,
