@@ -193,11 +193,17 @@ You can authenticate with the Confluence API using the following methods:
 
 #### Personal Access Token (PAT)
 
+> Info: PAT is only available for self-hosted Confluence.
+
 The plugin uses `CONFLUENCE_PAT` to authenticate with the Confluence API via token. You can set this value in the environment variables.
 
-#### Basic Authentication
+To read more about how to create a PAT, please refer to the [official documentation](https://confluence.atlassian.com/enterprise/using-personal-access-tokens-1026032365.html#UsingPersonalAccessTokens-CreatingPATsintheapplication).
+
+#### API token
 
 The plugin uses `CONFLUENCE_USERNAME` and `CONFLUENCE_PASSWORD` to authenticate with the Confluence API via `basic auth`. You can set these values in the environment variables.
+
+To read more about how to create an API token, please refer to the [official documentation](https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account).
 
 > Info: The order above is the priority. If you set both, the plugin will use the PAT.
 
