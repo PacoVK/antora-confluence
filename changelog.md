@@ -13,6 +13,16 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[semantic version
 
 ### changed
 
+## 0.3.3
+
+### fixes
+
+- [Highlighted text disappearing in Confluence #47](https://github.com/PacoVK/antora-confluence/pull/47)
+
+### added
+
+### changed
+
 ## 0.3.2
 
 ### fixes
