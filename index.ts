@@ -17,9 +17,6 @@ import {
 } from "./lib/service/StateService";
 import { AntoraPlaybook, CaptainConfig, PageRepresentation } from "./lib/types";
 
-let confluenceClient: ConfluenceClient;
-let outPutDir: string;
-
 const LOGGER = getLogger();
 
 const publishToConfluence = async (
@@ -34,12 +31,13 @@ const publishToConfluence = async (
     return;
   }
   LOGGER.info(`Publishing ${playbook.site.title} to Confluence`);
-  outPutDir = playbook.output.dir || ANTORA_DEFAULTS.OUTPUT_DIR;
-  confluenceClient = new ConfluenceClientV1({
+  const outPutDir = playbook.output.dir || ANTORA_DEFAULTS.OUTPUT_DIR;
+  const confluenceClient: ConfluenceClient = new ConfluenceClientV1({
     editorVersion: destConfig.editorVersion || "v1",
     baseUrl: new URL(destConfig.confluenceApi),
     spaceKey: destConfig.confluenceSpace,
     ancestorId: destConfig.ancestorId,
+    captainName: destConfig.captainName,
   });
   await confluenceClient.init();
   const pageStructure = new Map();

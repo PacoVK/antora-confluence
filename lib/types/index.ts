@@ -48,6 +48,7 @@ export type CaptainConfig = {
   excludeFiles?: string[];
   mapper?: PathMapper[];
   filter?: PageFilter[];
+  captainName?: string;
 };
 
 export interface PathMapper {

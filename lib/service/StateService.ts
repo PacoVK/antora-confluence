@@ -19,15 +19,15 @@ const encodeState = (state: string) => {
 };
 
 const initializeState = async (confluenceClient: ConfluenceClient) => {
-  LOGGER.info("Initializing state");
+  LOGGER.info(`Initializing state (${confluenceClient.CAPTAIN_NAME})`);
   const response = await sendRequest(
     confluenceClient.fetchPageIdByName(
-      "Captain State Page",
+      confluenceClient.CAPTAIN_NAME,
       ConfluencePageStatus.DRAFT,
     ),
   );
   if (response.results && response.results.length > 0) {
-    LOGGER.info(`Decoding Confluence state`);
+    LOGGER.info(`Decoding Confluence state (${confluenceClient.CAPTAIN_NAME})`);
     const state = parse(response.results[0].body.storage.value).querySelector(
       "p",
     )?.textContent;
@@ -48,12 +48,12 @@ const createState = async (
   confluenceClient: ConfluenceClient,
   inventory: any,
 ) => {
-  LOGGER.info("Creating Confluence state");
+  LOGGER.info(`Creating Confluence state (${confluenceClient.CAPTAIN_NAME})`);
   const state = encodeState(inventory);
   const updateResponse = await sendRequest(
     confluenceClient.createPage(
       {
-        title: "Captain State Page",
+        title: confluenceClient.CAPTAIN_NAME,
         content: `<p>${state}</p>`,
       },
       ConfluencePageStatus.DRAFT,
@@ -67,12 +67,12 @@ const createState = async (
 };
 
 const updateState = async (confluenceClient: ConfluenceClient, state: any) => {
-  LOGGER.info(`Updating state`);
+  LOGGER.info(`Updating state (${confluenceClient.CAPTAIN_NAME})`);
   LOGGER.debug(`${state.value}`);
   await sendRequest(
     confluenceClient.updatePage(
       {
-        title: "Captain State Page",
+        title: confluenceClient.CAPTAIN_NAME,
         content: `<p>${encodeState(state.value)}</p>`,
       },
       state.id,
