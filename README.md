@@ -83,13 +83,46 @@ output:
       confluence-space: my-spacekey
 ```
 
+If you would like to have more than one instance you can have more than one captain-name to track the state inside multiple ancestors.
+
+```yaml
+output:
+  destinations:
+    - provider: antora-confluence
+      editor-version: v1
+      show-banner: true # Warns that the page isn't editable and may be overwritten
+      confluence-api: https://<redacted>.atlassian.net
+      confluence-space: EX # Example space
+      ancestor-id: 1234567890 # Page 1 under example space
+      captain-name: State (Page 1)
+      exclude-files:
+        - '!page-1-*/**' # Exclude everything except antora names starting page-1-
+      mapper:
+        - path: page-1-example/latest
+          target: Example
+        - path: page-1-example2/latest
+          target: Example Two
+    - provider: antora-confluence
+      editor-version: v1
+      show-banner: true # Warns that the page isn't editable and may be overwritten
+      confluence-api: https://<redacted>.atlassian.net
+      confluence-space: EX # Example space
+      ancestor-id: 1234567891 # Page 2 under example space
+      captain-name: State (Page 2)
+      exclude-files:
+        - '!page-2-*/**' # Exclude everything except antora names starting page-2-
+      mapper:
+        - path: page-2-placeholder/latest
+          target: Placeholder
+```
+
 For full reference, please head over to the [docs](https://docs.antora.org/antora/latest/playbook/configure-output/).
 
 > Info: If you are using Confluence on-prem, your `confluence-api` can either require a context path or not. If your Confluence API is available at `https://confluence.example.com/docs`, you need to specify the `confluence-api` as `https://<redacted>.com/confluence/docs`. If your Confluence API is available at `https://confluence.example.com/rest/api`, you need to specify the `confluence-api` as `https://confluence.example.com/rest/api` (mind there is no context path in the URL). Confluence Cloud does not require a context path, it always uses `/wiki` as context.
 
 ### State Management
 
-The Captain will keep track of the pages it has created in Confluence. This is to ensure that it does not create duplicate pages and to detect page renames. The state is stored in a dedicated page with `DRAFT` status called `Captain State Page` in the root of your Space, or if defined, right under your starting point defined via `ancestor-id` option. If you delete this page, the Captain will recreate it, but it will assume no page exist in the target space. This may lead to errors and the only solution is to delete all Pages managed by Captain. Per default Confluence Pages created in `DRAFT` status are only visible to the owner.
+The Captain will keep track of the pages it has created in Confluence. This is to ensure that it does not create duplicate pages and to detect page renames. The state is stored in a dedicated page with `DRAFT` status called `Captain State Page` (or the name of your choosing) in the root of your Space, or if defined, right under your starting point defined via `ancestor-id` option. If you delete this page, the Captain will recreate it, but it will assume no page exist in the target space. This may lead to errors and the only solution is to delete all Pages managed by Captain. Per default Confluence Pages created in `DRAFT` status are only visible to the owner.
 
 ### Configuration
 
@@ -103,6 +136,7 @@ The Captain will keep track of the pages it has created in Confluence. This is t
 | show-banner      | Specify if all your pages should contain an info banner, that this pages were created by automation and changes may be lost. | false (default)            |
 | mapper           | Specify a custom mapper to map the Antora pages to Confluence pages.                                                         | [] (default)               |
 | exclude-files    | Specify files that should be excluded from the publishing process. Wildcards and Glob-patterns are supported                 | [] (default)               |
+| captain-name    | Override the name of the Captain State Page, useful if you have multiple antora-confluence providers in the same space        | "Captain State Page" (default)         |
 
 #### Using Mappers
 

@@ -10,6 +10,7 @@ interface ConfluenceClientOptions {
   spaceKey: string;
   editorVersion: string;
   ancestorId?: string;
+  captainName?: string;
 }
 
 const LOGGER = getLogger();
@@ -27,6 +28,7 @@ export abstract class ConfluenceClient {
   readonly BASE_URL;
   readonly AUTHORIZATION_HEADER;
   readonly ANCESTOR_ID;
+  readonly CAPTAIN_NAME;
 
   constructor(config: ConfluenceClientOptions) {
     this.BASE_URL = new URL(config.baseUrl.origin);
@@ -42,6 +44,10 @@ export abstract class ConfluenceClient {
     this.API_V2_PATH = apiContext + this.API_V2_IDENTIFIER;
     this.AUTHORIZATION_HEADER = this.buildAuthHeader();
     this.ANCESTOR_ID = config.ancestorId;
+    this.CAPTAIN_NAME = config.captainName || "Captain State Page";
+    LOGGER.debug(
+      `ConfluenceClient: constructor CAPTAIN_NAME ${this.CAPTAIN_NAME}`,
+    );
   }
 
   async init() {
