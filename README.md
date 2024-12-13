@@ -122,6 +122,8 @@ For full reference, please head over to the [docs](https://docs.antora.org/antor
 
 ### State Management
 
+> Info: **Prior** to **0.4.0** the Captain supported only one state file. If you are upgrading from a version prior to 0.4.0 and want to use the feature of multiple state files, please make sure to set the state file for already existing docs to the default `Captain State Page`.
+
 The Captain will keep track of the pages it has created in Confluence. This is to ensure that it does not create duplicate pages and to detect page renames. The state is stored in a dedicated page with `DRAFT` status called `Captain State Page` (or the name of your choosing) in the root of your Space, or if defined, right under your starting point defined via `ancestor-id` option. If you delete this page, the Captain will recreate it, but it will assume no page exist in the target space. This may lead to errors and the only solution is to delete all Pages managed by Captain. Per default Confluence Pages created in `DRAFT` status are only visible to the owner.
 
 ### Configuration
