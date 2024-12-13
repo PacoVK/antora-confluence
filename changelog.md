@@ -13,6 +13,16 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[semantic version
 
 ### changed
 
+## 0.4.0
+
+### fixes
+
+### added
+
+- [Add support for more than one instance with multiple captains #53](https://github.com/PacoVK/antora-confluence/pull/53) - Kudos to [@jamesacres](https://github.com/jamesacres)
+
+### changed
+
 ## 0.3.3
 
 ### fixes
