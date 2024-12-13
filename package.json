@@ -18,6 +18,7 @@
     "dist"
   ],
   "license": "Apache-2.0",
+  "private": false,
   "author": {
     "name": "Pascal Euhus",
     "url": "https://pascal.euhus.dev"
@@ -48,6 +49,5 @@
     "node-fetch": "^3.3.2",
     "node-html-parser": "^6.1.12",
     "winston": "^3.11.0"
-  },
-  "packageManager": "yarn@4.5.3"
+  }
 }
