@@ -96,7 +96,7 @@ output:
       ancestor-id: 1234567890 # Page 1 under example space
       captain-name: State (Page 1)
       exclude-files:
-        - '!page-1-*/**' # Exclude everything except antora names starting page-1-
+        - "!page-1-*/**" # Exclude everything except antora names starting page-1-
       mapper:
         - path: page-1-example/latest
           target: Example
@@ -110,7 +110,7 @@ output:
       ancestor-id: 1234567891 # Page 2 under example space
       captain-name: State (Page 2)
       exclude-files:
-        - '!page-2-*/**' # Exclude everything except antora names starting page-2-
+        - "!page-2-*/**" # Exclude everything except antora names starting page-2-
       mapper:
         - path: page-2-placeholder/latest
           target: Placeholder
@@ -128,17 +128,17 @@ The Captain will keep track of the pages it has created in Confluence. This is t
 
 ### Configuration
 
-| Option           | Description                                                                                                                  | Info                       |
-| ---------------- | ---------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
-| confluence-api   | URL to your Confluence API endpoint                                                                                          | **required**               |
-| confluence-space | The Confluence space key to publish the pages to                                                                             | **required**               |
-| editor-version   | The Confluence editor version to use to create pages                                                                         | v1 (default) / v2          |
-| filters          | Specify paths or files that you want to publish to Confluence                                                                | [] (default)               |
-| ancestor-id      | Specify the overall parent page for your docs. Needs to be the pageId of the parent page, not the DisplayName.               | defaults to the space root |
-| show-banner      | Specify if all your pages should contain an info banner, that this pages were created by automation and changes may be lost. | false (default)            |
-| mapper           | Specify a custom mapper to map the Antora pages to Confluence pages.                                                         | [] (default)               |
-| exclude-files    | Specify files that should be excluded from the publishing process. Wildcards and Glob-patterns are supported                 | [] (default)               |
-| captain-name    | Override the name of the Captain State Page, useful if you have multiple antora-confluence providers in the same space        | "Captain State Page" (default)         |
+| Option           | Description                                                                                                                  | Info                           |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------ |
+| confluence-api   | URL to your Confluence API endpoint                                                                                          | **required**                   |
+| confluence-space | The Confluence space key to publish the pages to                                                                             | **required**                   |
+| editor-version   | The Confluence editor version to use to create pages                                                                         | v1 (default) / v2              |
+| filters          | Specify paths or files that you want to publish to Confluence                                                                | [] (default)                   |
+| ancestor-id      | Specify the overall parent page for your docs. Needs to be the pageId of the parent page, not the DisplayName.               | defaults to the space root     |
+| show-banner      | Specify if all your pages should contain an info banner, that this pages were created by automation and changes may be lost. | false (default)                |
+| mapper           | Specify a custom mapper to map the Antora pages to Confluence pages.                                                         | [] (default)                   |
+| exclude-files    | Specify files that should be excluded from the publishing process. Wildcards and Glob-patterns are supported                 | [] (default)                   |
+| captain-name     | Override the name of the Captain State Page, useful if you have multiple antora-confluence providers in the same space       | "Captain State Page" (default) |
 
 #### Using Mappers
 
