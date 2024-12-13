@@ -12,6 +12,7 @@ jobs:
         with:
           node-version: '20.x'
           registry-url: 'https://registry.npmjs.org'
+      - run: corepack enable
       - run: yarn install --frozen-lockfile
       - run: yarn format
       - run: yarn lint
