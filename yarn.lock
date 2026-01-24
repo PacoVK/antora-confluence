@@ -2824,10 +2824,10 @@ node-fetch@^3.3.2:
     fetch-blob "^3.1.4"
     formdata-polyfill "^4.0.10"
 
-node-html-parser@^6.1.12:
-  version "6.1.13"
-  resolved "https://registry.yarnpkg.com/node-html-parser/-/node-html-parser-6.1.13.tgz#a1df799b83df5c6743fcd92740ba14682083b7e4"
-  integrity sha512-qIsTMOY4C/dAa5Q5vsobRpOOvPfC4pB61UVW2uSwZNUp0QU/jCekTal1vMmbO0DgdHeLUJpv/ARmDqErVxA3Sg==
+node-html-parser@^7.0.0:
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/node-html-parser/-/node-html-parser-7.0.2.tgz#2b81ec9d7a83d55ccb83c939b7a618b7ad391328"
+  integrity sha512-DxodLVh7a6JMkYzWyc8nBX9MaF4M0lLFYkJHlWOiu7+9/I6mwNK9u5TbAMC7qfqDJEPX9OIoWA2A9t4C2l1mUQ==
   dependencies:
     css-select "^5.1.0"
     he "1.2.0"
